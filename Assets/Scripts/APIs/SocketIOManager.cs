@@ -10,11 +10,13 @@ using System.Linq;
 using Newtonsoft.Json;
 using Best.SocketIO;
 using Best.SocketIO.Events;
+using Newtonsoft.Json.Linq;
+using System.Runtime.Serialization;
 
 public class SocketIOManager : MonoBehaviour
 {
-    [SerializeField]
-    private SlotBehaviour slotManager;
+    [SerializeField] private SlotBehaviour slotManager;
+    [SerializeField] private UIManager uIManager;
 
     internal GameData initialData = null;
     internal UIData initUIData = null;
@@ -30,13 +32,19 @@ public class SocketIOManager : MonoBehaviour
     [SerializeField]
     internal JSHandler _jsManager;
 
-    [SerializeField]
-    private string SocketURI;
+    protected string SocketURI = "https://dev.casinoparadize.com";
+    //protected string SocketURI = "http://localhost:5000";
 
     [SerializeField]
     private string TestToken;
 
     protected string gameID = "SL-AQUA";
+    internal bool isLoading;
+
+    private void Awake()
+    {
+        isLoading = true;
+    }
 
     private void Start()
     {
@@ -154,6 +162,7 @@ public class SocketIOManager : MonoBehaviour
     private void OnDisconnected(string response)
     {
         Debug.Log("Disconnected from the server");
+        uIManager.DisconnectionPopup();
     }
 
     private void OnError(string response)
@@ -200,7 +209,6 @@ public class SocketIOManager : MonoBehaviour
     {
         Debug.Log(jsonObject);
         Root myData = JsonConvert.DeserializeObject<Root>(jsonObject);
-
         string id = myData.id;
 
         switch (id)
@@ -209,6 +217,7 @@ public class SocketIOManager : MonoBehaviour
                 {
                     Debug.Log(jsonObject);
                     initialData = myData.message.GameData;
+                    
                     initUIData = myData.message.UIData;
                     playerdata = myData.message.PlayerData;
                     bonusdata = myData.message.BonusData;
@@ -252,6 +261,9 @@ public class SocketIOManager : MonoBehaviour
         slotManager.SetInitialUI();
 
         Application.ExternalCall("window.parent.postMessage", "OnEnter", "*");
+
+        isLoading = false;
+
     }
 
     internal void AccumulateResult(double currBet)
@@ -292,11 +304,11 @@ public class SocketIOManager : MonoBehaviour
         return stringList;
     }
 
-    private List<string> ConvertListListIntToListString(List<List<int>> listOfLists)
+    private List<string> ConvertListListIntToListString(List<List<double>> listOfLists)
     {
         List<string> resultList = new List<string>();
 
-        foreach (List<int> innerList in listOfLists)
+        foreach (List<double> innerList in listOfLists)
         {
             // Convert each integer in the inner list to string
             List<string> stringList = new List<string>();
@@ -353,6 +365,7 @@ public class SocketIOManager : MonoBehaviour
 public class BetData
 {
     public double currentBet;
+    public double currentLines= 20;
     //public double TotalLines;
 }
 
@@ -388,8 +401,8 @@ public class AbtLogo
 public class GameData
 {
     public List<List<string>> Reel { get; set; }
-    public List<List<int>> Lines { get; set; }
-    public List<int> Bets { get; set; }
+    public List<List<double>> Lines { get; set; }
+    public List<double> Bets { get; set; }
     public bool canSwitchLines { get; set; }
     public List<int> LinesCount { get; set; }
     public List<int> autoSpin { get; set; }
@@ -403,6 +416,7 @@ public class GameData
     public double jackpot { get; set; }
     public bool isBonus { get; set; }
     public double BonusStopIndex { get; set; }
+    public List<string> BonusResult { get; set; }
 }
 
 [Serializable]
@@ -431,6 +445,7 @@ public class UIData
     public string PopLink { get; set; }
 }
 
+
 [Serializable]
 public class Paylines
 {
@@ -440,23 +455,34 @@ public class Paylines
 [Serializable]
 public class Symbol
 {
-    public Multiplier multiplier { get; set; }
-}
+    public int ID { get; set; }
+    public string Name { get; set; }
+    [JsonProperty("multiplier")]
+    public object MultiplierObject { get; set; }
 
-[Serializable]
-public class Multiplier
-{
-    [JsonProperty("5x")]
-    public double _5x { get; set; }
+    // This property will hold the properly deserialized list of lists of integers
+    [JsonIgnore]
+    public List<List<int>> Multiplier { get; private set; }
 
-    [JsonProperty("4x")]
-    public double _4x { get; set; }
-
-    [JsonProperty("3x")]
-    public double _3x { get; set; }
-
-    [JsonProperty("2x")]
-    public double _2x { get; set; }
+    // Custom deserialization method to handle the conversion
+    [OnDeserialized]
+    internal void OnDeserializedMethod(StreamingContext context)
+    {
+        // Handle the case where multiplier is an object (empty in JSON)
+        if (MultiplierObject is JObject)
+        {
+            Multiplier = new List<List<int>>();
+        }
+        else
+        {
+            // Deserialize normally assuming it's an array of arrays
+            Multiplier = JsonConvert.DeserializeObject<List<List<int>>>(MultiplierObject.ToString());
+        }
+    }
+    public object defaultAmount { get; set; }
+    public object symbolsCount { get; set; }
+    public object increaseValue { get; set; }
+    public int freeSpin { get; set; }
 }
 
 [Serializable]
@@ -464,6 +490,8 @@ public class PlayerData
 {
     public double Balance { get; set; }
     public double haveWon { get; set; }
+    public double currentWining { get; set; }
+
 }
 
 

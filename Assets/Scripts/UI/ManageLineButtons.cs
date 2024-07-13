@@ -14,7 +14,7 @@ public class ManageLineButtons : MonoBehaviour, IPointerEnterHandler,IPointerExi
 	[SerializeField]
 	private TMP_Text num_text;
 
-	internal bool isActive = false;
+	internal bool isActive = true;
 
 
 	public void OnPointerEnter(PointerEventData eventData)

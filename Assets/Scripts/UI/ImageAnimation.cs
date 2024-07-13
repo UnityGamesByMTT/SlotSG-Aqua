@@ -34,6 +34,15 @@ public class ImageAnimation : MonoBehaviour
 
 	public float delayBetweenLoop;
 
+	public bool StartOnAwake = false;
+
+	public bool DestroyOnCompletion = false;
+
+	[SerializeField] internal bool isplaying;
+
+	[SerializeField]
+	private Sprite OriginalSprite;
+
 	private void Awake()
 	{
 		if (Instance == null)
@@ -42,9 +51,17 @@ public class ImageAnimation : MonoBehaviour
 		}
 	}
 
+	private void Start()
+	{
+		OriginalSprite = rendererDelegate.sprite;
+	}
+
 	private void OnEnable()
 	{
-
+		if (StartOnAwake)
+		{
+			StartAnimation();
+		}
 	}
 
 	private void OnDisable()
@@ -55,6 +72,7 @@ public class ImageAnimation : MonoBehaviour
 
 	private void AnimationProcess()
 	{
+		isplaying = true;
 		SetTextureOfIndex();
 		indexOfTexture++;
 		if (indexOfTexture == textureArray.Count)
@@ -63,11 +81,22 @@ public class ImageAnimation : MonoBehaviour
 			if (doLoopAnimation)
 			{
 				Invoke("AnimationProcess", delayBetweenAnimation + delayBetweenLoop);
+				isplaying = true;
+			}
+			else
+			{
+				if (DestroyOnCompletion)
+				{
+					this.gameObject.SetActive(false);
+				}
+				isplaying = false;
 			}
 		}
 		else
 		{
 			Invoke("AnimationProcess", delayBetweenAnimation);
+			isplaying = true;
+
 		}
 	}
 
@@ -105,9 +134,13 @@ public class ImageAnimation : MonoBehaviour
 	{
 		if (currentAnimationState != 0)
 		{
-			rendererDelegate.sprite = textureArray[0];
+			if (OriginalSprite != null)
+				rendererDelegate.sprite = OriginalSprite;
+			else
+				rendererDelegate.sprite = textureArray[0];
 			CancelInvoke("AnimationProcess");
 			currentAnimationState = ImageState.NONE;
+			isplaying = false;
 		}
 	}
 
