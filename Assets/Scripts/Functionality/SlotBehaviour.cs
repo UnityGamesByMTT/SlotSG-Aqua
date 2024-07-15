@@ -735,7 +735,6 @@ public class SlotBehaviour : MonoBehaviour
 
         CheckPopups = true;
 
-
         currentBalance = SocketManager.playerdata.Balance;
 
         if (SocketManager.resultData.WinAmout >= bet * 5 && SocketManager.resultData.WinAmout < bet * 10)
@@ -759,12 +758,10 @@ public class SlotBehaviour : MonoBehaviour
 
         if (SocketManager.resultData.jackpot > 0)
         {
+            CheckPopups = true;
             uiManager.PopulateWin(4, SocketManager.resultData.jackpot);
         }
-        else
-        {
-            CheckPopups = false;
-        }
+
 
         yield return new WaitUntil(() => !CheckPopups);
 
@@ -801,6 +798,7 @@ public class SlotBehaviour : MonoBehaviour
         }
 
     }
+
     internal void CallCloseSocket()
     {
         SocketManager.CloseSocket();
