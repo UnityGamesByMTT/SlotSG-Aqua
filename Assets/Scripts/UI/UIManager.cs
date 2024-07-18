@@ -113,12 +113,11 @@ public class UIManager : MonoBehaviour
     [SerializeField] private TMP_Text jackpot_Text;
 
 
-    [SerializeField]
-    private AudioController audioController;
 
 
 
     [Header("scripts")]
+    [SerializeField] private AudioController audioController;
     [SerializeField] private SlotBehaviour slotManager;
     [SerializeField] private SocketIOManager socketManager;
 
@@ -187,20 +186,12 @@ public class UIManager : MonoBehaviour
 
         if (PaytablePopup_Object) PageList[0].SetActive(true);
 
-        if (paginationButtonGrp[0]) paginationButtonGrp[0].onClick.RemoveAllListeners();
-        if (paginationButtonGrp[0]) paginationButtonGrp[0].onClick.AddListener(delegate { GoToPage(0); });
-
-        if (paginationButtonGrp[1]) paginationButtonGrp[1].onClick.RemoveAllListeners();
-        if (paginationButtonGrp[1]) paginationButtonGrp[1].onClick.AddListener(delegate { GoToPage(1); });
-
-        if (paginationButtonGrp[2]) paginationButtonGrp[2].onClick.RemoveAllListeners();
-        if (paginationButtonGrp[2]) paginationButtonGrp[2].onClick.AddListener(delegate { GoToPage(2); });
-
-        if (paginationButtonGrp[3]) paginationButtonGrp[3].onClick.RemoveAllListeners();
-        if (paginationButtonGrp[3]) paginationButtonGrp[3].onClick.AddListener(delegate { GoToPage(3); });
-
-        if (paginationButtonGrp[4]) paginationButtonGrp[4].onClick.RemoveAllListeners();
-        if (paginationButtonGrp[4]) paginationButtonGrp[4].onClick.AddListener(delegate { GoToPage(4); });
+        for (int i = 0; i < paginationButtonGrp.Length; i++)
+        {
+            int index = i;
+            if (paginationButtonGrp[index]) paginationButtonGrp[index].onClick.RemoveAllListeners();
+            if (paginationButtonGrp[index]) paginationButtonGrp[index].onClick.AddListener(delegate { GoToPage(index); });
+        }
 
         if (Paytable_Button) Paytable_Button.onClick.RemoveAllListeners();
         if (Paytable_Button) Paytable_Button.onClick.AddListener(delegate { OpenPopup(PaytablePopup_Object); });
@@ -236,6 +227,7 @@ public class UIManager : MonoBehaviour
         if (cancel_Button) cancel_Button.onClick.RemoveAllListeners();
         if (cancel_Button) cancel_Button.onClick.AddListener(delegate { ClosePopup(QuitPopupObject); });
 
+        if (Close_Button) Close_Button.onClick.RemoveAllListeners();
         if (Close_Button) Close_Button.onClick.AddListener(delegate { ClosePopup(LowBalancePopup_Object); });
 
         if (audioController) audioController.ToggleMute(false);
@@ -555,6 +547,22 @@ public class UIManager : MonoBehaviour
         paginationButtonGrp[paginationCounter - 1].transform.GetChild(0).gameObject.SetActive(true);
     }
 
+    private void UrlButtons(string url)
+    {
+        Application.OpenURL(url);
+    }
+
+    internal void DisconnectionPopup()
+    {
+
+        //ClosePopup(ReconnectPopup_Object);
+        if (!isExit)
+        {
+            OpenPopup(DisconnectPopup_Object);
+        }
+
+    }
+
     private void ToggleMusic()
     {
         isMusic = !isMusic;
@@ -572,21 +580,7 @@ public class UIManager : MonoBehaviour
         }
     }
 
-    private void UrlButtons(string url)
-    {
-        Application.OpenURL(url);
-    }
 
-    internal void DisconnectionPopup()
-    {
-
-        //ClosePopup(ReconnectPopup_Object);
-        if (!isExit)
-        {
-            OpenPopup(DisconnectPopup_Object);
-        }
-
-    }
 
     private void ToggleSound()
     {

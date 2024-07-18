@@ -166,6 +166,7 @@ public class AudioController : MonoBehaviour
                 break;
             case "button":
                 audioPlayer_button.mute = toggle;
+                audioPlayer_Spin.mute = toggle;
                 break;
             case "wl":
                 audioPlayer_wl.mute = toggle;

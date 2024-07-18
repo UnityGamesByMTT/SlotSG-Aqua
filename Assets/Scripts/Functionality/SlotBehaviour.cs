@@ -166,6 +166,7 @@ public class SlotBehaviour : MonoBehaviour
     private double currentBalance = 0;
     private double currentTotalBet = 0;
 
+    private int FreeSpins = 0;
     private void Start()
     {
         IsAutoSpin = false;
@@ -237,14 +238,15 @@ public class SlotBehaviour : MonoBehaviour
     private IEnumerator FreeSpinCoroutine(int spinchances)
     {
         int i = 0;
-        while (i < spinchances)
+        while (i < FreeSpins)
         {
             i++;
-            uiManager.updateFreeSPinData(1 - ((float)i / (float)spinchances), spinchances - i);
+            uiManager.updateFreeSPinData(1 - ((float)i / (float)FreeSpins), FreeSpins - i);
             yield return new WaitForSeconds(0.2f);
             StartSlots(IsAutoSpin);
             yield return tweenroutine;
         }
+        FreeSpins = 0;
         ToggleButtonGrp(true);
         IsFreeSpin = false;
     }
@@ -489,10 +491,10 @@ public class SlotBehaviour : MonoBehaviour
         if (Lines_text) Lines_text.text = SocketManager.initialData.LinesCount[LineCounter].ToString();
         if (TotalWin_text) TotalWin_text.text = SocketManager.playerdata.currentWining.ToString("f2");
         if (Balance_text) Balance_text.text = SocketManager.playerdata.Balance.ToString("f2");
+        uiManager.InitialiseUIData(SocketManager.initUIData.AbtLogo.link, SocketManager.initUIData.AbtLogo.logoSprite, SocketManager.initUIData.ToULink, SocketManager.initUIData.PopLink, SocketManager.initUIData.paylines, SocketManager.initUIData.spclSymbolTxt);
         currentBalance = SocketManager.playerdata.Balance;
         currentTotalBet = SocketManager.initialData.Bets[BetCounter] * SocketManager.initialData.Lines.Count;
         CompareBalance();
-        uiManager.InitialiseUIData(SocketManager.initUIData.AbtLogo.link, SocketManager.initUIData.AbtLogo.logoSprite, SocketManager.initUIData.ToULink, SocketManager.initUIData.PopLink, SocketManager.initUIData.paylines, SocketManager.initUIData.spclSymbolTxt);
     }
     //reset the layout after populating the slots
     internal void LayoutReset(int number)
@@ -736,16 +738,31 @@ public class SlotBehaviour : MonoBehaviour
         CheckPopups = true;
 
         currentBalance = SocketManager.playerdata.Balance;
+        if (SocketManager.resultData.jackpot > 0)
+        {
+            uiManager.PopulateWin(4, SocketManager.resultData.jackpot);
 
-        if (SocketManager.resultData.WinAmout >= bet * 5 && SocketManager.resultData.WinAmout < bet * 10)
+            yield return new WaitUntil(() => !CheckPopups);
+            CheckPopups = true;
+
+        }
+
+        if (SocketManager.resultData.isBonus)
+        {
+            bonus_Controller.StartBonusGame(SocketManager.resultData.BonusResult);
+            yield return new WaitUntil(() => bonus_Controller.isfinished);
+            yield return new WaitForSeconds(1f);
+            bonus_Controller.FinishBonusGame();
+
+        }else if (SocketManager.resultData.WinAmout >= bet * 5 && SocketManager.resultData.WinAmout < bet * 10 && SocketManager.resultData.jackpot==0)
         {
             uiManager.PopulateWin(1, SocketManager.resultData.WinAmout);
         }
-        else if (SocketManager.resultData.WinAmout >= bet * 10 && SocketManager.resultData.WinAmout < bet * 15)
+        else if (SocketManager.resultData.WinAmout >= bet * 10 && SocketManager.resultData.WinAmout < bet * 15 && SocketManager.resultData.jackpot==0)
         {
             uiManager.PopulateWin(2, SocketManager.resultData.WinAmout);
         }
-        else if (SocketManager.resultData.WinAmout >= bet * 15)
+        else if (SocketManager.resultData.WinAmout >= bet * 15 && SocketManager.resultData.jackpot==0)
         {
             uiManager.PopulateWin(3, SocketManager.resultData.WinAmout);
         }
@@ -755,24 +772,6 @@ public class SlotBehaviour : MonoBehaviour
         }
 
         yield return new WaitUntil(() => !CheckPopups);
-
-        if (SocketManager.resultData.jackpot > 0)
-        {
-            CheckPopups = true;
-            uiManager.PopulateWin(4, SocketManager.resultData.jackpot);
-        }
-
-
-        yield return new WaitUntil(() => !CheckPopups);
-
-        if (SocketManager.resultData.isBonus)
-        {
-            bonus_Controller.StartBonusGame(SocketManager.resultData.BonusResult);
-            yield return new WaitUntil(() => bonus_Controller.isfinished);
-            yield return new WaitForSeconds(1f);
-            bonus_Controller.FinishBonusGame();
-
-        }
 
 
         if (TotalWin_text) TotalWin_text.text = SocketManager.resultData.WinAmout.ToString("f2");
@@ -792,9 +791,10 @@ public class SlotBehaviour : MonoBehaviour
 
         if (SocketManager.resultData.freeSpins > 0)
         {
-            uiManager.setFreeSpinData((int)SocketManager.resultData.freeSpins);
+            FreeSpins += (int)SocketManager.resultData.freeSpins;
+            uiManager.setFreeSpinData(FreeSpins);
             yield return new WaitForSeconds(1.0f);
-            FreeSpin((int)SocketManager.resultData.freeSpins);
+            FreeSpin(FreeSpins);
         }
 
     }
