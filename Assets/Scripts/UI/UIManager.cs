@@ -257,7 +257,6 @@ public class UIManager : MonoBehaviour
         yield return new WaitForSecondsRealtime(1f);
         if (spalsh_screen) spalsh_screen.SetActive(false);
         StopCoroutine(LoadingTextAnimate());
-        audioController.playBgAudio();
     }
 
     private IEnumerator LoadingTextAnimate()

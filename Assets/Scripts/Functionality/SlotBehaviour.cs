@@ -849,6 +849,8 @@ public class SlotBehaviour : MonoBehaviour
         {
             TempList[i].StopAnimation();
         }
+        TempList.Clear();
+        TempList.TrimExcess();
     }
 
     private void CheckPayoutLineBackend(List<int> LineId, List<string> points_AnimString)

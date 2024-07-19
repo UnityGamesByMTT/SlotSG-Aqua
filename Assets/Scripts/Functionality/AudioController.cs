@@ -21,7 +21,7 @@ public class AudioController : MonoBehaviour
 
     private void Start()
     {
-        //if (bg_adudio) bg_adudio.Play();
+        playBgAudio();
         //audioPlayer_button.clip = clips[clips.Length - 1];
     }
 
@@ -50,7 +50,7 @@ public class AudioController : MonoBehaviour
         }
         StopWLAaudio();
         //audioPlayer_wl.clip = clips[index];
-        audioPlayer_wl.loop = true;
+        //audioPlayer_wl.loop = true;
         audioPlayer_wl.Play();
 
     }
