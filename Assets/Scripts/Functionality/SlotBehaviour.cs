@@ -293,6 +293,7 @@ public class SlotBehaviour : MonoBehaviour
         IsHoldSpin = false;
         Invoke("AutoSpinHold", 2f);
     }
+
     internal void StopSpinRoutine()
     {
         CancelInvoke("AutoSpinHold");
@@ -674,6 +675,11 @@ public class SlotBehaviour : MonoBehaviour
         if (currentBalance < currentTotalBet && !IsFreeSpin)
         {
             CompareBalance();
+            if (IsAutoSpin)
+            {
+                StopAutoSpin();
+                yield return new WaitForSeconds(1f);
+            }
             yield break;
         }
 
@@ -686,7 +692,6 @@ public class SlotBehaviour : MonoBehaviour
         }
         bet = 0;
         balance = 0;
-
         try
         {
             bet = double.Parse(TotalBet_text.text);

@@ -8247,7 +8247,7 @@ MonoBehaviour:
   uIManager: {fileID: 377874625}
   bonusdata: []
   _jsManager: {fileID: 500036493}
-  TestToken: eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6IjY2OGZiMmQwZmE0ZWVmYmQyZmQ0NWY3OCIsInVzZXJuYW1lIjoiZ2F1cmF2Iiwicm9sZSI6InBsYXllciIsImlhdCI6MTcyMDg0NzE3OSwiZXhwIjoxNzIwOTMzNTc5fQ.omnYYnozWFzXDcEGRFyYyCVguEghBL7CInatu624FbI
+  TestToken: eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6IjY2YTBhNmJkYzVjODcyYjE2YzM2ZjFkZCIsInVzZXJuYW1lIjoic2F5YW4iLCJyb2xlIjoicGxheWVyIiwiaWF0IjoxNzIxODgyOTI3LCJleHAiOjE3MjE5NjkzMjd9.npSZ-SkBPlu8AkAQC3fCkcLMtIq4tBtmuk4UJx4omMM
 --- !u!114 &500036493
 MonoBehaviour:
   m_ObjectHideFlags: 0
