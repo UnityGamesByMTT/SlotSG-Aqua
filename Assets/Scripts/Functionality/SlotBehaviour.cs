@@ -154,7 +154,7 @@ public class SlotBehaviour : MonoBehaviour
     Coroutine tweenroutine;
     Coroutine FreeSpinRoutine = null;
     bool IsAutoSpin = false;
-    bool IsSpinning = false;
+    [SerializeField]bool IsSpinning = false;
     internal bool IsHoldSpin = false;
     private int BetCounter = 0;
     private int LineCounter = 0;
@@ -167,6 +167,7 @@ public class SlotBehaviour : MonoBehaviour
     private double currentTotalBet = 0;
 
     private int FreeSpins = 0;
+   
     private void Start()
     {
         IsAutoSpin = false;
@@ -205,7 +206,7 @@ public class SlotBehaviour : MonoBehaviour
 
             IsAutoSpin = true;
             if (AutoSpinStop_Button) AutoSpinStop_Button.gameObject.SetActive(true);
-            if (AutoSpin_Button) AutoSpin_Button.gameObject.SetActive(false);
+            //if (AutoSpin_Button) AutoSpin_Button.gameObject.SetActive(false);
 
             if (AutoSpinRoutine != null)
             {
@@ -257,7 +258,7 @@ public class SlotBehaviour : MonoBehaviour
         {
             IsAutoSpin = false;
             if (AutoSpinStop_Button) AutoSpinStop_Button.gameObject.SetActive(false);
-            if (AutoSpin_Button) AutoSpin_Button.gameObject.SetActive(true);
+            //if (AutoSpin_Button) AutoSpin_Button.gameObject.SetActive(true);
             StartCoroutine(StopAutoSpinCoroutine());
         }
 
@@ -301,7 +302,7 @@ public class SlotBehaviour : MonoBehaviour
         {
             IsAutoSpin = false;
             if (AutoSpinStop_Button) AutoSpinStop_Button.gameObject.SetActive(false);
-            if (AutoSpin_Button) AutoSpin_Button.gameObject.SetActive(true);
+            //if (AutoSpin_Button) AutoSpin_Button.gameObject.SetActive(true);
             StartCoroutine(StopAutoSpinCoroutine());
         }
     }
@@ -777,6 +778,7 @@ public class SlotBehaviour : MonoBehaviour
         }
 
         yield return new WaitUntil(() => !CheckPopups);
+        if (audioController) audioController.StopWLAaudio();
 
 
         if (TotalWin_text) TotalWin_text.text = SocketManager.resultData.WinAmout.ToString("f2");
@@ -892,11 +894,11 @@ public class SlotBehaviour : MonoBehaviour
             }
 
         }
-        else
-        {
+        //else
+        //{
 
-            if (audioController) audioController.StopWLAaudio();
-        }
+        //    if (audioController) audioController.StopWLAaudio();
+        //}
     }
 
     private void GenerateMatrix(int value)

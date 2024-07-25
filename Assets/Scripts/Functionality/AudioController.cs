@@ -131,7 +131,7 @@ public class AudioController : MonoBehaviour
 
         //StopButtonAudio();
         audioPlayer_button.Play();
-        Invoke("StopButtonAudio", audioPlayer_button.clip.length);
+        //Invoke("StopButtonAudio", audioPlayer_button.clip.length);
 
     }
 
