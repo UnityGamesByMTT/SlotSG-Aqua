@@ -113,7 +113,9 @@ public class UIManager : MonoBehaviour
     [SerializeField] private TMP_Text jackpot_Text;
 
 
-
+    [Header("AnotherDevice Popup")]
+    [SerializeField] private Button CloseAD_Button;
+    [SerializeField] private GameObject ADPopup_Object;
 
 
     [Header("scripts")]
@@ -241,6 +243,9 @@ public class UIManager : MonoBehaviour
         if (Music_Button) Music_Button.onClick.RemoveAllListeners();
         if (Music_Button) Music_Button.onClick.AddListener(ToggleMusic);
 
+        if (CloseAD_Button) CloseAD_Button.onClick.RemoveAllListeners();
+        if (CloseAD_Button) CloseAD_Button.onClick.AddListener(CallOnExitFunction);
+
     }
 
 
@@ -257,6 +262,11 @@ public class UIManager : MonoBehaviour
         yield return new WaitForSecondsRealtime(1f);
         if (spalsh_screen) spalsh_screen.SetActive(false);
         StopCoroutine(LoadingTextAnimate());
+    }
+
+    internal void ADfunction()
+    {
+        OpenPopup(ADPopup_Object); 
     }
 
     private IEnumerator LoadingTextAnimate()
