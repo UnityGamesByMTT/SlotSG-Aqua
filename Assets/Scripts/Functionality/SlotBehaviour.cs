@@ -154,7 +154,7 @@ public class SlotBehaviour : MonoBehaviour
     Coroutine tweenroutine;
     Coroutine FreeSpinRoutine = null;
     bool IsAutoSpin = false;
-    [SerializeField]bool IsSpinning = false;
+    [SerializeField] bool IsSpinning = false;
     internal bool IsHoldSpin = false;
     private int BetCounter = 0;
     private int LineCounter = 0;
@@ -167,7 +167,7 @@ public class SlotBehaviour : MonoBehaviour
     private double currentTotalBet = 0;
 
     private int FreeSpins = 0;
-   
+
     private void Start()
     {
         IsAutoSpin = false;
@@ -268,8 +268,9 @@ public class SlotBehaviour : MonoBehaviour
     {
         while (IsAutoSpin)
         {
-            yield return tweenroutine;
             StartSlots(IsAutoSpin);
+            yield return tweenroutine;
+            yield return new WaitForSeconds(2f);
 
 
         }
@@ -694,27 +695,35 @@ public class SlotBehaviour : MonoBehaviour
         }
         bet = 0;
         balance = 0;
-        try
+        if (!IsFreeSpin)
         {
-            bet = double.Parse(TotalBet_text.text);
-        }
-        catch (Exception e)
-        {
-            Debug.Log("Error while conversion " + e.Message);
-        }
 
-        try
-        {
-            balance = double.Parse(Balance_text.text);
-        }
-        catch (Exception e)
-        {
-            Debug.Log("Error while conversion " + e.Message);
-        }
+            try
+            {
+                bet = double.Parse(TotalBet_text.text);
+            }
+            catch (Exception e)
+            {
+                Debug.Log("Error while conversion " + e.Message);
+            }
 
-        balance = balance - (bet);
+            try
+            {
+                balance = double.Parse(Balance_text.text);
+            }
+            catch (Exception e)
+            {
+                Debug.Log("Error while conversion " + e.Message);
+            }
+            double initAmount = balance;
+            balance = balance - (bet);
 
-        if (Balance_text) Balance_text.text = balance.ToString("f2");
+            DOTween.To(() => initAmount, (val) => initAmount = val, balance, 0.8f).OnUpdate(() =>
+            {
+                if (Balance_text) Balance_text.text = initAmount.ToString("f2");
+            });
+
+        }
 
         SocketManager.AccumulateResult(BetCounter);
 
@@ -761,15 +770,16 @@ public class SlotBehaviour : MonoBehaviour
             yield return new WaitForSeconds(1f);
             bonus_Controller.FinishBonusGame();
 
-        }else if (SocketManager.resultData.WinAmout >= bet * 5 && SocketManager.resultData.WinAmout < bet * 10 && SocketManager.resultData.jackpot==0)
+        }
+        else if (SocketManager.resultData.WinAmout >= bet * 5 && SocketManager.resultData.WinAmout < bet * 10 && SocketManager.resultData.jackpot == 0)
         {
             uiManager.PopulateWin(1, SocketManager.resultData.WinAmout);
         }
-        else if (SocketManager.resultData.WinAmout >= bet * 10 && SocketManager.resultData.WinAmout < bet * 15 && SocketManager.resultData.jackpot==0)
+        else if (SocketManager.resultData.WinAmout >= bet * 10 && SocketManager.resultData.WinAmout < bet * 15 && SocketManager.resultData.jackpot == 0)
         {
             uiManager.PopulateWin(2, SocketManager.resultData.WinAmout);
         }
-        else if (SocketManager.resultData.WinAmout >= bet * 15 && SocketManager.resultData.jackpot==0)
+        else if (SocketManager.resultData.WinAmout >= bet * 15 && SocketManager.resultData.jackpot == 0)
         {
             uiManager.PopulateWin(3, SocketManager.resultData.WinAmout);
         }
@@ -797,10 +807,16 @@ public class SlotBehaviour : MonoBehaviour
             IsSpinning = false;
         }
 
-        if (SocketManager.resultData.freeSpins > 0)
+        if (SocketManager.resultData.freeSpins > 0 && !IsFreeSpin)
         {
             FreeSpins += (int)SocketManager.resultData.freeSpins;
             uiManager.setFreeSpinData(FreeSpins);
+            if (IsAutoSpin)
+            {
+                StopAutoSpin();
+                yield return new WaitForSeconds(0.1f);
+            }
+
             yield return new WaitForSeconds(1.0f);
             FreeSpin(FreeSpins);
         }
