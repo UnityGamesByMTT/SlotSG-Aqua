@@ -670,7 +670,16 @@ public class SlotBehaviour : MonoBehaviour
         PayCalculator.ResetLines();
         tweenroutine = StartCoroutine(TweenRoutine());
     }
-
+    private void OnApplicationFocus(bool focus)
+    {
+        if(focus)
+        {
+            if(!IsSpinning)
+            {
+                if (audioController) audioController.StopWLAaudio();
+            }
+        }
+    }
     private IEnumerator TweenRoutine()
     {
         audioController.StopWLAaudio();
