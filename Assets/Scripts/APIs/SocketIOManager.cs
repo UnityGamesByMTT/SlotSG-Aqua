@@ -166,12 +166,18 @@ public class SocketIOManager : MonoBehaviour
         uIManager.ADfunction();
     }
 
+    private void SendPing()
+    {
+        InvokeRepeating("AliveRequest", 0f, 3f);
+    }
+
     private void AliveRequest(string eventName)
     {
         InitData message = new InitData();
         if (this.manager.Socket != null && this.manager.Socket.IsOpen)
         {
-            this.manager.Socket.Emit(eventName);
+            // this.manager.Socket.Emit(eventName);
+            this.manager.Socket.Emit("YES I AM ALIVE");
             Debug.Log("JSON data sent: alive");
         }
         else
@@ -203,6 +209,7 @@ public class SocketIOManager : MonoBehaviour
     void OnConnected(ConnectResponse resp)
     {
         Debug.Log("Connected!");
+        SendPing();
         //InitRequest("AUTH");
     }
 

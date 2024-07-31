@@ -551,26 +551,26 @@ public class SlotBehaviour : MonoBehaviour
                 }
 
                 break;
-            case 2:
+            case 3:
                 for (int i = 0; i < J_Sprite.Length; i++)
                 {
                     animScript.textureArray.Add(J_Sprite[i]);
                 }
 
                 break;
-            case 3:
+            case 4:
                 for (int i = 0; i < K_Sprite.Length; i++)
                 {
                     animScript.textureArray.Add(K_Sprite[i]);
                 }
                 break;
-            case 4:
+            case 5:
                 for (int i = 0; i < Q_Sprite.Length; i++)
                 {
                     animScript.textureArray.Add(Q_Sprite[i]);
                 }
                 break;
-            case 5:
+            case 2:
                 for (int i = 0; i < A_Sprite.Length; i++)
                 {
                     animScript.textureArray.Add(A_Sprite[i]);
