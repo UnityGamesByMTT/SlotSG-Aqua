@@ -157,7 +157,7 @@ public class SocketIOManager : MonoBehaviour
     private void OnSocketAlert(string data)
     {
         Debug.Log("Received alert with data: " + data);
-        AliveRequest("YES I AM ALIVE");
+        //AliveRequest("YES I AM ALIVE");
     }
 
     private void OnSocketOtherDevice(string data)
