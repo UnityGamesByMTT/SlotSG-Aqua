@@ -171,7 +171,7 @@ public class SocketIOManager : MonoBehaviour
         InvokeRepeating("AliveRequest", 0f, 3f);
     }
 
-    private void AliveRequest(string eventName)
+    private void AliveRequest()
     {
         InitData message = new InitData();
         if (this.manager.Socket != null && this.manager.Socket.IsOpen)
