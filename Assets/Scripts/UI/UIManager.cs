@@ -363,19 +363,20 @@ public class UIManager : MonoBehaviour
             }
         });
 
+        // if(DisconnectPopup_Object.activeSelf) return;
+
         DOVirtual.DelayedCall(6f, () =>
         {
             if (jackpot)
             {
-                if (jackpot_Object) jackpot_Object.SetActive(true);
-
+                ClosePopup(jackpot_Object);
+                jackpot_Text.text="";
             }
             else
             {
-                if (WinPopup_Object) WinPopup_Object.SetActive(false);
-
+                ClosePopup(WinPopup_Object);
+                Win_Text.text="";
             }
-            if (MainPopup_Object) MainPopup_Object.SetActive(false);
             slotManager.CheckPopups = false;
         });
     }
@@ -511,7 +512,10 @@ public class UIManager : MonoBehaviour
     {
         if (audioController) audioController.PlayButtonAudio();
         if (Popup) Popup.SetActive(false);
+        if(!DisconnectPopup_Object.activeSelf){
+
         if (MainPopup_Object) MainPopup_Object.SetActive(false);
+        }
     }
 
     private void TurnPage(bool type)

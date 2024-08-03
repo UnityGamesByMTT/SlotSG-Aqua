@@ -511,7 +511,7 @@ public class SlotBehaviour : MonoBehaviour
     {
         if (Slot_Objects[number]) Slot_Objects[number].SetActive(true);
 
-        for (int i = 0; i < maxReelItemCount; i++)
+        for (int i = 0; i < values.Count; i++)
         {
             GameObject myImg = Instantiate(Image_Prefab, Slot_Transform[number]);
             images[number].slotImages.Add(myImg.GetComponent<Image>());
@@ -526,7 +526,7 @@ public class SlotBehaviour : MonoBehaviour
             PopulateAnimationSprites(images[number].slotImages[images[number].slotImages.Count - 1].gameObject.GetComponent<ImageAnimation>(), values[k]);
         }
         if (mainContainer_RT) LayoutRebuilder.ForceRebuildLayoutImmediate(mainContainer_RT);
-        tweenHeight = (maxReelItemCount * IconSizeFactor) - 280;
+        tweenHeight = (values.Count * IconSizeFactor) - 280;
         GenerateMatrix(number);
     }
 
