@@ -157,7 +157,7 @@ public class SocketIOManager : MonoBehaviour
     private void OnSocketAlert(string data)
     {
         Debug.Log("Received alert with data: " + data);
-        AliveRequest("YES I AM ALIVE");
+        //AliveRequest("YES I AM ALIVE");
     }
 
     private void OnSocketOtherDevice(string data)
@@ -171,7 +171,7 @@ public class SocketIOManager : MonoBehaviour
         InvokeRepeating("AliveRequest", 0f, 3f);
     }
 
-    private void AliveRequest(string eventName)
+    private void AliveRequest()
     {
         InitData message = new InitData();
         if (this.manager.Socket != null && this.manager.Socket.IsOpen)
