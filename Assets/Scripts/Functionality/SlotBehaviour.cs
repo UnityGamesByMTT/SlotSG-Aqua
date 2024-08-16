@@ -201,6 +201,7 @@ public class SlotBehaviour : MonoBehaviour
         if (AutoSpinStop_Button) AutoSpinStop_Button.onClick.AddListener(StopAutoSpin);
 
         tweenHeight = (myImages.Length * IconSizeFactor) - 280;
+        ToggleMinusPlusButton(1);
     }
 
     internal void AutoSpin()
@@ -457,6 +458,7 @@ public class SlotBehaviour : MonoBehaviour
             if (BetCounter < SocketManager.initialData.Bets.Count - 1)
             {
                 BetCounter++;
+                CheckBetCounter();
             }
         }
         else
@@ -464,6 +466,7 @@ public class SlotBehaviour : MonoBehaviour
             if (BetCounter > 0)
             {
                 BetCounter--;
+                CheckBetCounter();
             }
         }
         if (BetPerLine_text) BetPerLine_text.text = SocketManager.initialData.Bets[BetCounter].ToString();
@@ -472,6 +475,41 @@ public class SlotBehaviour : MonoBehaviour
         CompareBalance();
 
 
+    }
+
+    private void CheckBetCounter()
+    {
+        if(BetCounter >= SocketManager.initialData.Bets.Count - 1)
+        {
+            ToggleMinusPlusButton(1);
+        }
+        else if(BetCounter <= 0)
+        {
+            ToggleMinusPlusButton(0);
+        }
+        else
+        {
+            ToggleMinusPlusButton(2);
+        }
+    }
+
+    private void ToggleMinusPlusButton(int m_config_case)
+    {
+        switch (m_config_case)
+        {
+            case 0:
+                BetPlus_Button.interactable = true;
+                BetMinus_Button.interactable = false;
+                break;
+            case 1:
+                BetPlus_Button.interactable = false;
+                BetMinus_Button.interactable = true;
+                break;
+            case 2:
+                BetPlus_Button.interactable = true;
+                BetMinus_Button.interactable = true;
+                break;
+        }
     }
 
 
