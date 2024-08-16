@@ -184,22 +184,11 @@ public class UIManager : MonoBehaviour
         if (Previous_Button) Previous_Button.onClick.RemoveAllListeners();
         if (Previous_Button) Previous_Button.onClick.AddListener(delegate { TurnPage(false); });
 
-        if (Previous_Button) Previous_Button.interactable = false;
-
-        if (PaytablePopup_Object) PageList[0].SetActive(true);
-
-        for (int i = 0; i < paginationButtonGrp.Length; i++)
-        {
-            int index = i;
-            if (paginationButtonGrp[index]) paginationButtonGrp[index].onClick.RemoveAllListeners();
-            if (paginationButtonGrp[index]) paginationButtonGrp[index].onClick.AddListener(delegate { GoToPage(index); });
-        }
-
         if (Paytable_Button) Paytable_Button.onClick.RemoveAllListeners();
         if (Paytable_Button) Paytable_Button.onClick.AddListener(delegate { OpenPopup(PaytablePopup_Object); });
 
         if (PaytableExit_Button) PaytableExit_Button.onClick.RemoveAllListeners();
-        if (PaytableExit_Button) PaytableExit_Button.onClick.AddListener(delegate { ClosePopup(PaytablePopup_Object); });
+        if (PaytableExit_Button) PaytableExit_Button.onClick.AddListener(delegate { ClosePopup(PaytablePopup_Object); GoToPage(0); });
 
         if (Settings_Button) Settings_Button.onClick.RemoveAllListeners();
         if (Settings_Button) Settings_Button.onClick.AddListener(delegate { OpenPopup(SettingsPopup_Object); });
@@ -246,6 +235,16 @@ public class UIManager : MonoBehaviour
         if (CloseAD_Button) CloseAD_Button.onClick.RemoveAllListeners();
         if (CloseAD_Button) CloseAD_Button.onClick.AddListener(CallOnExitFunction);
 
+
+        GoToPage(0);
+
+        //Enabling Down Index Button Click To Direct Navigate
+        for (int i = 0; i < paginationButtonGrp.Length; i++)
+        {
+            int index = i;
+            if (paginationButtonGrp[index]) paginationButtonGrp[index].onClick.RemoveAllListeners();
+            if (paginationButtonGrp[index]) paginationButtonGrp[index].onClick.AddListener(delegate { GoToPage(index); CheckPagesNavigationButton(); });
+        }
     }
 
 
@@ -523,41 +522,101 @@ public class UIManager : MonoBehaviour
         if (audioController) audioController.PlayButtonAudio();
 
         if (type)
+        {
             paginationCounter++;
+            CheckPagesNavigationButton();
+        }
         else
+        {
             paginationCounter--;
+            CheckPagesNavigationButton();
+        }
 
 
-        GoToPage(paginationCounter - 1);
+        GoToPage(paginationCounter);
 
 
     }
 
-    private void GoToPage(int index)
+    private void CheckPagesNavigationButton()
     {
-
-        paginationCounter = index + 1;
-
-        paginationCounter = Mathf.Clamp(paginationCounter, 1, 5);
-
-        if (Next_Button) Next_Button.interactable = !(paginationCounter >= 5);
-
-        if (Previous_Button) Previous_Button.interactable = !(paginationCounter <= 1);
-
-        for (int i = 0; i < PageList.Length; i++)
+        if (paginationCounter >= PageList.Length - 1)
         {
-            PageList[i].SetActive(false);
+            ToggleNavigationButton(1);
         }
-
-        for (int i = 0; i < paginationButtonGrp.Length; i++)
+        else if(paginationCounter <= 0)
         {
-            paginationButtonGrp[i].interactable = true;
-            paginationButtonGrp[i].transform.GetChild(0).gameObject.SetActive(false);
+            ToggleNavigationButton(0);
         }
+        else
+        {
+            ToggleNavigationButton(2);
+        }
+    }
 
-        PageList[paginationCounter - 1].SetActive(true);
-        paginationButtonGrp[paginationCounter - 1].interactable = false;
-        paginationButtonGrp[paginationCounter - 1].transform.GetChild(0).gameObject.SetActive(true);
+    private void ToggleNavigationButton(int m_index_nav)
+    {
+        switch(m_index_nav)
+        {
+            case 0:
+                Next_Button.interactable = true;
+                Previous_Button.interactable = false;
+                break;
+            case 1:
+                Next_Button.interactable = false;
+                Previous_Button.interactable = true;
+                break;
+            case 2:
+                Next_Button.interactable = true;
+                Previous_Button.interactable = true;
+                break;
+        }
+    }
+
+    //private void GoToPage(int index)
+    //{
+
+    //    paginationCounter = index + 1;
+
+    //    paginationCounter = Mathf.Clamp(paginationCounter, 1, 5);
+
+    //    if (Next_Button) Next_Button.interactable = !(paginationCounter >= 5);
+
+    //    if (Previous_Button) Previous_Button.interactable = !(paginationCounter <= 1);
+
+    //    for (int i = 0; i < PageList.Length; i++)
+    //    {
+    //        PageList[i].SetActive(false);
+    //    }
+
+    //    for (int i = 0; i < paginationButtonGrp.Length; i++)
+    //    {
+    //        paginationButtonGrp[i].interactable = true;
+    //        paginationButtonGrp[i].transform.GetChild(0).gameObject.SetActive(false);
+    //    }
+
+    //    PageList[paginationCounter - 1].SetActive(true);
+    //    paginationButtonGrp[paginationCounter - 1].interactable = false;
+    //    paginationButtonGrp[paginationCounter - 1].transform.GetChild(0).gameObject.SetActive(true);
+    //}
+
+    private void GoToPage(int m_page_index)
+    {
+        paginationCounter = m_page_index;
+        for(int i = 0; i < PageList.Length; i++)
+        {
+            if(m_page_index == i)
+            {
+                PageList[m_page_index].SetActive(true);
+                paginationButtonGrp[m_page_index].transform.GetChild(0).gameObject.SetActive(true);
+            }
+            else
+            {
+                PageList[i].SetActive(false);
+                paginationButtonGrp[i].transform.GetChild(0).gameObject.SetActive(false);
+            }
+        }
+        CheckPagesNavigationButton();
     }
 
     private void UrlButtons(string url)

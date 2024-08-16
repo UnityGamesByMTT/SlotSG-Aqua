@@ -133,6 +133,7 @@ public class SlotBehaviour : MonoBehaviour
     [SerializeField]
     private PayoutCalculation PayCalculator;
 
+    private Tweener WinTween = null;
     private List<Tweener> alltweens = new List<Tweener>();
 
 
@@ -142,6 +143,7 @@ public class SlotBehaviour : MonoBehaviour
     [Header("parameters")]
     [SerializeField] private int IconSizeFactor = 100;       //set this parameter according to the size of the icon and spacing
     private int numberOfSlots = 5;          //number of columns
+    [SerializeField] private int SpacingFactor = 0;
     [SerializeField] private int verticalVisibility = 3;
 
     [Header("scripts")]
@@ -197,6 +199,8 @@ public class SlotBehaviour : MonoBehaviour
 
         if (AutoSpinStop_Button) AutoSpinStop_Button.onClick.RemoveAllListeners();
         if (AutoSpinStop_Button) AutoSpinStop_Button.onClick.AddListener(StopAutoSpin);
+
+        tweenHeight = (myImages.Length * IconSizeFactor) - 280;
     }
 
     internal void AutoSpin()
@@ -481,10 +485,10 @@ public class SlotBehaviour : MonoBehaviour
     }
 
     //populate the slots with the values recieved from backend
-    internal void PopulateInitalSlots(int number, List<int> myvalues)
-    {
-        PopulateSlot(myvalues, number);
-    }
+    //internal void PopulateInitalSlots(int number, List<int> myvalues)
+    //{
+    //    PopulateSlot(myvalues, number);
+    //}
 
     internal void SetInitialUI()
     {
@@ -507,28 +511,28 @@ public class SlotBehaviour : MonoBehaviour
         if (SlotStart_Button) SlotStart_Button.interactable = true;
     }
 
-    private void PopulateSlot(List<int> values, int number)
-    {
-        if (Slot_Objects[number]) Slot_Objects[number].SetActive(true);
+    //private void PopulateSlot(List<int> values, int number)
+    //{
+    //    if (Slot_Objects[number]) Slot_Objects[number].SetActive(true);
 
-        for (int i = 0; i < values.Count; i++)
-        {
-            GameObject myImg = Instantiate(Image_Prefab, Slot_Transform[number]);
-            images[number].slotImages.Add(myImg.GetComponent<Image>());
-            images[number].slotImages[i].sprite = myImages[values[i]];
-            PopulateAnimationSprites(images[number].slotImages[i].gameObject.GetComponent<ImageAnimation>(), values[i]);
-        }
-        for (int k = 0; k < 2; k++)
-        {
-            GameObject mylastImg = Instantiate(Image_Prefab, Slot_Transform[number]);
-            images[number].slotImages.Add(mylastImg.GetComponent<Image>());
-            images[number].slotImages[images[number].slotImages.Count - 1].sprite = myImages[values[k]];
-            PopulateAnimationSprites(images[number].slotImages[images[number].slotImages.Count - 1].gameObject.GetComponent<ImageAnimation>(), values[k]);
-        }
-        if (mainContainer_RT) LayoutRebuilder.ForceRebuildLayoutImmediate(mainContainer_RT);
-        tweenHeight = (values.Count * IconSizeFactor) - 280;
-        GenerateMatrix(number);
-    }
+    //    for (int i = 0; i < values.Count; i++)
+    //    {
+    //        GameObject myImg = Instantiate(Image_Prefab, Slot_Transform[number]);
+    //        images[number].slotImages.Add(myImg.GetComponent<Image>());
+    //        images[number].slotImages[i].sprite = myImages[values[i]];
+    //        PopulateAnimationSprites(images[number].slotImages[i].gameObject.GetComponent<ImageAnimation>(), values[i]);
+    //    }
+    //    for (int k = 0; k < 2; k++)
+    //    {
+    //        GameObject mylastImg = Instantiate(Image_Prefab, Slot_Transform[number]);
+    //        images[number].slotImages.Add(mylastImg.GetComponent<Image>());
+    //        images[number].slotImages[images[number].slotImages.Count - 1].sprite = myImages[values[k]];
+    //        PopulateAnimationSprites(images[number].slotImages[images[number].slotImages.Count - 1].gameObject.GetComponent<ImageAnimation>(), values[k]);
+    //    }
+    //    if (mainContainer_RT) LayoutRebuilder.ForceRebuildLayoutImmediate(mainContainer_RT);
+    //    tweenHeight = (values.Count * IconSizeFactor) - 280;
+    //    GenerateMatrix(number);
+    //}
 
     //function to populate animation sprites accordingly
     private void PopulateAnimationSprites(ImageAnimation animScript, int val)
@@ -661,6 +665,8 @@ public class SlotBehaviour : MonoBehaviour
                 AutoSpinRoutine = null;
             }
         }
+
+        WinningsAnim(false);
 
         if (SlotStart_Button) SlotStart_Button.interactable = false;
         if (TempList.Count > 0)
@@ -886,6 +892,32 @@ public class SlotBehaviour : MonoBehaviour
         TempList.TrimExcess();
     }
 
+    //Win Animation When A Line Is Matched
+    private void WinningsAnim(bool IsStart)
+    {
+        if (IsStart)
+        {
+            WinTween = TotalWin_text.gameObject.GetComponent<RectTransform>().DOScale(new Vector2(1.5f, 1.5f), 1f).SetLoops(-1, LoopType.Yoyo).SetDelay(0);
+        }
+        else
+        {
+            WinTween.Kill();
+            TotalWin_text.gameObject.GetComponent<RectTransform>().localScale = Vector3.one;
+        }
+    }
+
+    internal void shuffleInitialMatrix()
+    {
+        for (int i = 0; i < Tempimages.Count; i++)
+        {
+            for (int j = 0; j < 3; j++)
+            {
+                int randomIndex = UnityEngine.Random.Range(0, myImages.Length);
+                Tempimages[i].slotImages[j].sprite = myImages[randomIndex];
+            }
+        }
+    }
+
     private void CheckPayoutLineBackend(List<int> LineId, List<string> points_AnimString)
     {
         audioController.StopApinBonusAudio();
@@ -918,7 +950,7 @@ public class SlotBehaviour : MonoBehaviour
                     }
                 }
             }
-
+            WinningsAnim(true);
         }
         //else
         //{
@@ -949,8 +981,8 @@ public class SlotBehaviour : MonoBehaviour
     private IEnumerator StopTweening(int reqpos, Transform slotTransform, int index)
     {
         alltweens[index].Pause();
-        int tweenpos = (reqpos * IconSizeFactor) - IconSizeFactor;
-        alltweens[index] = slotTransform.DOLocalMoveY(-tweenpos + 50, 0.5f).SetEase(Ease.OutElastic);
+        int tweenpos = (reqpos * (IconSizeFactor + SpacingFactor)) - (IconSizeFactor + (2 * SpacingFactor));
+        alltweens[index] = slotTransform.DOLocalMoveY(-tweenpos + 100 + (SpacingFactor > 0 ? SpacingFactor / 4 : 0), 0.5f).SetEase(Ease.OutElastic);
         yield return new WaitForSeconds(0.2f);
     }
 
