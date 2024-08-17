@@ -159,7 +159,6 @@ public class SlotBehaviour : MonoBehaviour
     [SerializeField] bool IsSpinning = false;
     internal bool IsHoldSpin = false;
     private int BetCounter = 0;
-    private int LineCounter = 0;
     internal int linecounter = 20;
     internal bool CheckPopups = false;
     private double bet = 0;
@@ -531,10 +530,9 @@ public class SlotBehaviour : MonoBehaviour
     internal void SetInitialUI()
     {
         BetCounter = SocketManager.initialData.Bets.Count - 1;
-        LineCounter = SocketManager.initialData.LinesCount.Count - 1;
         if (TotalBet_text) TotalBet_text.text = ((SocketManager.initialData.Bets[BetCounter] * SocketManager.initialData.Lines.Count)).ToString();
         if (BetPerLine_text) BetPerLine_text.text = SocketManager.initialData.Bets[BetCounter].ToString();
-        if (Lines_text) Lines_text.text = SocketManager.initialData.LinesCount[LineCounter].ToString();
+        if (Lines_text) Lines_text.text = "20";
         if (TotalWin_text) TotalWin_text.text = SocketManager.playerdata.currentWining.ToString("f2");
         if (Balance_text) Balance_text.text = SocketManager.playerdata.Balance.ToString("f2");
         uiManager.InitialiseUIData(SocketManager.initUIData.AbtLogo.link, SocketManager.initUIData.AbtLogo.logoSprite, SocketManager.initUIData.ToULink, SocketManager.initUIData.PopLink, SocketManager.initUIData.paylines, SocketManager.initUIData.spclSymbolTxt);
@@ -542,35 +540,6 @@ public class SlotBehaviour : MonoBehaviour
         currentTotalBet = SocketManager.initialData.Bets[BetCounter] * SocketManager.initialData.Lines.Count;
         CompareBalance();
     }
-    //reset the layout after populating the slots
-    internal void LayoutReset(int number)
-    {
-        if (Slot_Elements[number]) Slot_Elements[number].ignoreLayout = true;
-        if (SlotStart_Button) SlotStart_Button.interactable = true;
-    }
-
-    //private void PopulateSlot(List<int> values, int number)
-    //{
-    //    if (Slot_Objects[number]) Slot_Objects[number].SetActive(true);
-
-    //    for (int i = 0; i < values.Count; i++)
-    //    {
-    //        GameObject myImg = Instantiate(Image_Prefab, Slot_Transform[number]);
-    //        images[number].slotImages.Add(myImg.GetComponent<Image>());
-    //        images[number].slotImages[i].sprite = myImages[values[i]];
-    //        PopulateAnimationSprites(images[number].slotImages[i].gameObject.GetComponent<ImageAnimation>(), values[i]);
-    //    }
-    //    for (int k = 0; k < 2; k++)
-    //    {
-    //        GameObject mylastImg = Instantiate(Image_Prefab, Slot_Transform[number]);
-    //        images[number].slotImages.Add(mylastImg.GetComponent<Image>());
-    //        images[number].slotImages[images[number].slotImages.Count - 1].sprite = myImages[values[k]];
-    //        PopulateAnimationSprites(images[number].slotImages[images[number].slotImages.Count - 1].gameObject.GetComponent<ImageAnimation>(), values[k]);
-    //    }
-    //    if (mainContainer_RT) LayoutRebuilder.ForceRebuildLayoutImmediate(mainContainer_RT);
-    //    tweenHeight = (values.Count * IconSizeFactor) - 280;
-    //    GenerateMatrix(number);
-    //}
 
     //function to populate animation sprites accordingly
     private void PopulateAnimationSprites(ImageAnimation animScript, int val)
@@ -860,20 +829,26 @@ public class SlotBehaviour : MonoBehaviour
             IsSpinning = false;
         }
 
-        if (SocketManager.resultData.freeSpins > 0 && !IsFreeSpin)
+        if (SocketManager.resultData.freeSpins.isNewAdded)
         {
-            FreeSpins += (int)SocketManager.resultData.freeSpins;
-            uiManager.setFreeSpinData(FreeSpins);
+            if (IsFreeSpin)
+            {
+                IsFreeSpin = false;
+                if (FreeSpinRoutine != null)
+                {
+                    StopCoroutine(FreeSpinRoutine);
+                    FreeSpinRoutine = null;
+                }
+            }
+            uiManager.setFreeSpinData((int)SocketManager.resultData.freeSpins.count);
             if (IsAutoSpin)
             {
                 StopAutoSpin();
                 yield return new WaitForSeconds(0.1f);
             }
-
             yield return new WaitForSeconds(1.0f);
             FreeSpin(FreeSpins);
         }
-
     }
 
     internal void CallCloseSocket()
