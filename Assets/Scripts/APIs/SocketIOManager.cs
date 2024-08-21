@@ -42,6 +42,9 @@ public class SocketIOManager : MonoBehaviour
     protected string gameID = "SL-AQUA";
     internal bool isLoading;
 
+    private const int maxReconnectionAttempts = 6;
+    private readonly TimeSpan reconnectionDelay = TimeSpan.FromSeconds(10);
+
     private void Awake()
     {
         Debug.unityLogger.logEnabled = false;
@@ -72,7 +75,9 @@ public class SocketIOManager : MonoBehaviour
     {
         // Create and setup SocketOptions
         SocketOptions options = new SocketOptions();
-        options.AutoConnect = false;
+        options.ReconnectionAttempts = maxReconnectionAttempts;
+        options.ReconnectionDelay = reconnectionDelay;
+        options.Reconnection = true;
 
         Application.ExternalCall("window.parent.postMessage", "authToken", "*");
 
