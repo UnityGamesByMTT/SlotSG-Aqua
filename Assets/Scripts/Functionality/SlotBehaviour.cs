@@ -478,11 +478,11 @@ public class SlotBehaviour : MonoBehaviour
 
     private void CheckBetCounter()
     {
-        if(BetCounter >= SocketManager.initialData.Bets.Count - 1)
+        if (BetCounter >= SocketManager.initialData.Bets.Count - 1)
         {
             ToggleMinusPlusButton(1);
         }
-        else if(BetCounter <= 0)
+        else if (BetCounter <= 0)
         {
             ToggleMinusPlusButton(0);
         }
@@ -532,7 +532,7 @@ public class SlotBehaviour : MonoBehaviour
         BetCounter = SocketManager.initialData.Bets.Count - 1;
         if (TotalBet_text) TotalBet_text.text = ((SocketManager.initialData.Bets[BetCounter] * SocketManager.initialData.Lines.Count)).ToString();
         if (BetPerLine_text) BetPerLine_text.text = SocketManager.initialData.Bets[BetCounter].ToString();
-        if (Lines_text) Lines_text.text = "20";
+        if (Lines_text) Lines_text.text = SocketManager.initialData.Lines.Count.ToString();
         if (TotalWin_text) TotalWin_text.text = SocketManager.playerdata.currentWining.ToString("f2");
         if (Balance_text) Balance_text.text = SocketManager.playerdata.Balance.ToString("f2");
         uiManager.InitialiseUIData(SocketManager.initUIData.AbtLogo.link, SocketManager.initUIData.AbtLogo.logoSprite, SocketManager.initUIData.ToULink, SocketManager.initUIData.PopLink, SocketManager.initUIData.paylines, SocketManager.initUIData.spclSymbolTxt);
@@ -685,9 +685,9 @@ public class SlotBehaviour : MonoBehaviour
     }
     private void OnApplicationFocus(bool focus)
     {
-        if(focus)
+        if (focus)
         {
-            if(!IsSpinning)
+            if (!IsSpinning)
             {
                 if (audioController) audioController.StopWLAaudio();
             }
@@ -817,6 +817,9 @@ public class SlotBehaviour : MonoBehaviour
         if (TotalWin_text) TotalWin_text.text = SocketManager.resultData.WinAmout.ToString("f2");
         if (Balance_text) Balance_text.text = SocketManager.playerdata.Balance.ToString("f2");
 
+        if (SocketManager.resultData.WinAmout > 0)
+            WinningsAnim(true);
+
 
         if (!IsAutoSpin)
         {
@@ -910,12 +913,12 @@ public class SlotBehaviour : MonoBehaviour
     {
         if (IsStart)
         {
-            WinTween = TotalWin_text.gameObject.GetComponent<RectTransform>().DOScale(new Vector2(1.5f, 1.5f), 1f).SetLoops(-1, LoopType.Yoyo).SetDelay(0);
+            WinTween = TotalWin_text.transform.DOScale(new Vector2(1.5f, 1.5f), 1f).SetLoops(-1, LoopType.Yoyo).SetDelay(0);
         }
         else
         {
             WinTween.Kill();
-            TotalWin_text.gameObject.GetComponent<RectTransform>().localScale = Vector3.one;
+            TotalWin_text.transform.localScale = Vector3.one;
         }
     }
 
@@ -963,7 +966,6 @@ public class SlotBehaviour : MonoBehaviour
                     }
                 }
             }
-            WinningsAnim(true);
         }
         //else
         //{
