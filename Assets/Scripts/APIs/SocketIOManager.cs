@@ -47,7 +47,7 @@ public class SocketIOManager : MonoBehaviour
 
     private void Awake()
     {
-        Debug.unityLogger.logEnabled = false;
+        // Debug.unityLogger.logEnabled = false;
         isLoading = true;
     }
 
