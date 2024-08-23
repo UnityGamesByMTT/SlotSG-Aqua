@@ -73,6 +73,8 @@ public class UIManager : MonoBehaviour
     [SerializeField] private TMP_Text Scatter_Text;
     [SerializeField] private TMP_Text Jackpot_Text;
 
+    [SerializeField] private TMP_Text Wild_Text;
+    [SerializeField] private TMP_Text Bonus_Text;
 
     [Header("Info Popup")]
     [SerializeField]
@@ -424,18 +426,41 @@ public class UIManager : MonoBehaviour
         {
             if (paylines.symbols[i].Name.ToUpper() == "FREESPIN")
             {
-                if (FreeSpin_Text) FreeSpin_Text.text = "Free Spin: Activates " + paylines.symbols[i].Multiplier[0][1] + ", " + paylines.symbols[i].Multiplier[1][1] + ", or " + paylines.symbols[i].Multiplier[2][1] + " free spins when 3, 4, or 5 symbols appear on pay lines.";
+                if (FreeSpin_Text) FreeSpin_Text.text = paylines.symbols[i].description.ToString();
             }
             if (paylines.symbols[i].Name.ToUpper() == "SCATTER")
             {
-                if (Scatter_Text) Scatter_Text.text = "Scatter: Offers higher pay outs and awards <color=yellow>" + paylines.symbols[i].Multiplier[0][1] + "</color> free spins if 5 symbols align on the pay line with a multiplier.\nPayout: 5x - " + paylines.symbols[i].Multiplier[0][0] + ", 4x - " + paylines.symbols[i].Multiplier[1][0] + ", 3x - " + paylines.symbols[i].Multiplier[2][0];
+                if (Scatter_Text) Scatter_Text.text = paylines.symbols[i].description.ToString();
             }
             if (paylines.symbols[i].Name.ToUpper() == "JACKPOT")
             {
-                if (Jackpot_Text) Jackpot_Text.text = "Jackpot: Mega win triggered by 5 Jackpot symbols on a pay line.\nPayout: <color=yellow>" + paylines.symbols[i].defaultAmount +" X" ;
+                if (Jackpot_Text) Jackpot_Text.text = paylines.symbols[i].description.ToString();
             }
-
+            if (paylines.symbols[i].Name.ToUpper() == "BONUS")
+            {
+                if (Bonus_Text) Bonus_Text.text = paylines.symbols[i].description.ToString();
+            }
+            if (paylines.symbols[i].Name.ToUpper() == "WILD")
+            {
+                if (Wild_Text) Wild_Text.text = paylines.symbols[i].description.ToString();
+            }
         }
+
+        // for (int i = 0; i < paylines.symbols.Count; i++)
+        // {
+        //     if (paylines.symbols[i].Name.ToUpper() == "FREESPIN")
+        //     {
+        //         if (FreeSpin_Text) FreeSpin_Text.text = "Free Spin: Activates " + paylines.symbols[i].Multiplier[0][1] + ", " + paylines.symbols[i].Multiplier[1][1] + ", or " + paylines.symbols[i].Multiplier[2][1] + " free spins when 3, 4, or 5 symbols appear on pay lines.";
+        //     }
+        //     if (paylines.symbols[i].Name.ToUpper() == "SCATTER")
+        //     {
+        //         if (Scatter_Text) Scatter_Text.text = "Scatter: Offers higher pay outs and awards <color=yellow>" + paylines.symbols[i].Multiplier[0][1] + "</color> free spins if 5 symbols align on the pay line with a multiplier.\nPayout: 5x - " + paylines.symbols[i].Multiplier[0][0] + ", 4x - " + paylines.symbols[i].Multiplier[1][0] + ", 3x - " + paylines.symbols[i].Multiplier[2][0];
+        //     }
+        //     if (paylines.symbols[i].Name.ToUpper() == "JACKPOT")
+        //     {
+        //         if (Jackpot_Text) Jackpot_Text.text = "Jackpot: Mega win triggered by 5 Jackpot symbols on a pay line.\nPayout: <color=yellow>" + paylines.symbols[i].defaultAmount +" X" ;
+        //     }
+        // }
     }
 
     private void CallOnExitFunction()

@@ -48,7 +48,7 @@ public class SocketIOManager : MonoBehaviour
     private void Awake()
     {
         Debug.unityLogger.logEnabled = false;
-        isLoading = false;
+        isLoading = true;
     }
 
     private void Start()
@@ -244,7 +244,7 @@ public class SocketIOManager : MonoBehaviour
                 {
                     Debug.Log(jsonObject);
                     initialData = myData.message.GameData;
-                    
+
                     initUIData = myData.message.UIData;
                     playerdata = myData.message.PlayerData;
                     bonusdata = myData.message.BonusData;
@@ -513,6 +513,7 @@ public class Symbol
     public object defaultAmount { get; set; }
     public object symbolsCount { get; set; }
     public object increaseValue { get; set; }
+    public object description { get; set; }
     public int freeSpin { get; set; }
 }
 
