@@ -93,4 +93,4 @@ jobs:
           git config advice.addIgnoredFile false
           git status
           git commit -m "Build"
-          git push origin HEAD:main
+          git push origin HEAD:main --force
