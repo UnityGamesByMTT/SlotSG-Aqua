@@ -27,9 +27,13 @@ jobs:
         with:
           token: ${{ secrets.PAT }}
 
-      # Git LFS
-      - name: Create LFS file list
-        run: git lfs ls-files -l | cut -d' ' -f1 | sort > .lfs-assets-id
+
+      - name: Git LFS Pull
+        run: |
+          git lfs pull
+          git add .
+          ls
+          git reset --hard
 
       - name: Restore LFS cache
         uses: actions/cache@v3
@@ -42,13 +46,11 @@ jobs:
         run: |
           echo "LFS cache directory contents:"
           ls -al .git/lfs || echo ".git/lfs directory does not exist"
-
-      - name: Git LFS Pull
-        run: |
-          git lfs pull
-          git add .
-          git reset --hard
-
+          
+        # Git LFS
+      - name: Create LFS file list
+        run: git lfs ls-files -l | cut -d' ' -f1 | sort > .lfs-assets-id
+          
       # Cache Unity Library
       - name: Cache Library directory
         uses: actions/cache@v3
@@ -58,6 +60,9 @@ jobs:
           key: Library-${{ hashFiles('Assets/**', 'Packages/**', 'ProjectSettings/**') }}
           restore-keys: |
             Library-
+
+
+
 
       - name: Verify Library Cache
         run: |
