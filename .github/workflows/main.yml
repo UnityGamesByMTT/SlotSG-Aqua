@@ -38,6 +38,11 @@ jobs:
           path: .git/lfs
           key: ${{ runner.os }}-lfs-${{ hashFiles('.lfs-assets-id') }}
 
+      - name: Verify LFS Cache
+        run: |
+          echo "LFS cache directory contents:"
+          ls -al .git/lfs || echo ".git/lfs directory does not exist"
+
       - name: Git LFS Pull
         run: |
           git lfs pull
@@ -54,13 +59,10 @@ jobs:
           restore-keys: |
             Library-
 
-      - name: Verify Cache
+      - name: Verify Library Cache
         run: |
-          if [ -d "Library" ]; then
-            echo "Library cache exists and is restored."
-          else
-            echo "Library cache not found or not restored."
-          fi
+          echo "Library directory contents:"
+          ls -al Library || echo "Library directory does not exist"
 
       # Build
       - name: Build project
