@@ -1,26 +1,32 @@
 name: Unity WebGL Automatic Build 👽✨🚀
+
 on:
   pull_request:
     branches:    
       - 'main'
   workflow_dispatch:
+
 permissions:
   contents: read
   pages: write
   id-token: write
+
 concurrency:
   group: "pages"
   cancel-in-progress: false
+
 jobs:
   build:
     name: Unity Build 👽
     runs-on: ubuntu-latest
+
     steps:
       # Checkout (without LFS)
       - name: Checkout repository
         uses: actions/checkout@v4
         with:
-          token: ${{secrets.PAT}}
+          token: ${{ secrets.PAT }}
+
       # Git LFS
       - name: Create LFS file list
         run: git lfs ls-files -l | cut -d' ' -f1 | sort > .lfs-assets-id
@@ -38,15 +44,25 @@ jobs:
           git add .
           git reset --hard
 
-      # # Cache
-      - uses: actions/cache@v3
+      # Cache Unity Library
+      - name: Cache Library directory
+        uses: actions/cache@v3
+        id: unity-cache
         with:
           path: Library
           key: Library-${{ hashFiles('Assets/**', 'Packages/**', 'ProjectSettings/**') }}
           restore-keys: |
             Library-
 
-      # # Build
+      - name: Verify Cache
+        run: |
+          if [ -d "Library" ]; then
+            echo "Library cache exists and is restored."
+          else
+            echo "Library cache not found or not restored."
+          fi
+
+      # Build
       - name: Build project
         uses: game-ci/unity-builder@v4
         env:
@@ -57,12 +73,14 @@ jobs:
           targetPlatform: ${{ vars.TARGET_PLATFORM }}
           buildsPath: ${{ vars.BUILD_PATH }}
           allowDirtyBuild: true
+
       # Output: Artifact
       - name: Upload Build Artifact
         uses: actions/upload-artifact@v3
         with:
           name: ${{ vars.ARTIFACT_NAME }}
           path: ${{ vars.BUILD_PATH }}
+
       # Deployment
       - name: Stash build result and reset local changes
         run: |
@@ -71,9 +89,8 @@ jobs:
           git config --global user.email "${{ secrets.GH_EMAIL }}"
           git config --global user.name "${{ secrets.GH_USERNAME }}"
           echo "Stash and reset"
-          git add  -f ${{ vars.BUILD_PATH }}/${{ vars.TARGET_PLATFORM }}
+          git add -f ${{ vars.BUILD_PATH }}/${{ vars.TARGET_PLATFORM }}
           git config advice.addIgnoredFile false
           git status
           git commit -m "Build"
           git push origin HEAD:main
-
