@@ -33,7 +33,7 @@ public class SocketIOManager : MonoBehaviour
     internal JSHandler _jsManager;
 
     protected string SocketURI = null;
-    protected string TestSocketURI = "https://dev.casinoparadize.com";
+    protected string TestSocketURI = "https://game-crm-rtp-backend.onrender.com/";
     //protected string SocketURI = "http://localhost:5000";
 
     [SerializeField]
