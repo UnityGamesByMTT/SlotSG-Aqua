@@ -5,7 +5,7 @@ on:
       - 'Develop'
   workflow_dispatch:
 permissions:
-  contents: read
+  contents: write  # Allow write access to the contents.
   pages: write
   id-token: write
 concurrency:
@@ -93,7 +93,7 @@ jobs:
         id: create_pr
         uses: peter-evans/create-pull-request@v5
         with:
-          token: ${{ secrets.G_TOKEN }}
+          token: ${{ secrets.PAT }}  # Use PAT here instead of GITHUB_TOKEN
           commit-message: "added: build artifacts"
           branch: build-artifacts
           base: DevBuild
@@ -103,7 +103,7 @@ jobs:
       
       - name: Cleanup - Delete Build Artifacts Branch
         env:
-          GITHUB_TOKEN: ${{ secrets.G_TOKEN }}
+          GITHUB_TOKEN: ${{ secrets.PAT }}  # Use PAT here instead of GITHUB_TOKEN
         run: |
           git push origin --delete build-artifacts
           git branch -D build-artifacts
