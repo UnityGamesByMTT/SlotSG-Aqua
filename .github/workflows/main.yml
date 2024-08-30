@@ -61,6 +61,7 @@ jobs:
           git config user.email "actions@github.com"
 
       - name: Create Build Branch
+        id: create_build_branch
         run: |
           BRANCH_NAME="Build-$(date +%s)"
           git checkout -b $BRANCH_NAME
@@ -69,14 +70,14 @@ jobs:
           git add build/WebGL
           git commit -m "Add WebGL build artifacts"
           git push origin $BRANCH_NAME
-          echo "::set-output name=branch_name::$BRANCH_NAME"
+          echo "branch_name=$BRANCH_NAME" >> $GITHUB_ENV
 
       - name: Create Pull Request
         uses: peter-evans/create-pull-request@v5
         with:
           token: ${{ secrets.GITHUB_TOKEN }}
           base: DevBuild
-          head: ${{ steps.create_build_branch.outputs.branch_name }}
+          head: ${{ env.branch_name }}
           title: "Update DevBuild with latest WebGL build artifacts"
           body: "This PR includes the latest WebGL build artifacts."
           draft: false
@@ -88,7 +89,7 @@ jobs:
             const pr = await github.rest.pulls.list({
               owner: context.repo.owner,
               repo: context.repo.repo,
-              head: context.actor + ":" + process.env.BRANCH_NAME,
+              head: context.actor + ":" + process.env.branch_name,
               base: "DevBuild",
               state: "open"
             });
@@ -104,4 +105,4 @@ jobs:
       - name: Delete Build Branch
         if: success()
         run: |
-          git push origin --delete $BRANCH_NAME
+          git push origin --delete ${{ env.branch_name }}
