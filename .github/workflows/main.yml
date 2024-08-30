@@ -1,4 +1,4 @@
-name: New Unity WebGL Automatic Build 👽✨🚀
+name: Unity WebGL Automatic Build 👽✨🚀
 on:
   pull_request:
     branches:    
@@ -79,6 +79,9 @@ jobs:
           git config advice.addIgnoredFile false
           git commit -m 'added: build artifacts'
           git push --set-upstream origin build-artifacts
+          
+      - name: Verify Branch Creation
+        run: git branch -a
 
   create_pull_request:
     needs: build
