@@ -1,9 +1,9 @@
-name: Unity WebGL Automatic Build 👽✨🚀
+name: New Unity WebGL Automatic Build 👽✨🚀
 on:
-    pull_request:
-     branches:    
+  pull_request:
+    branches:    
       - 'Develop'
-    workflow_dispatch:
+  workflow_dispatch:
 permissions:
   contents: read
   pages: write
@@ -20,7 +20,8 @@ jobs:
       - name: Checkout repository
         uses: actions/checkout@v4
         with:
-          token: ${{secrets.PAT}}
+          token: ${{ secrets.PAT }}
+
       # Git LFS
       - name: Create LFS file list
         run: git lfs ls-files -l | cut -d' ' -f1 | sort > .lfs-assets-id
@@ -38,7 +39,7 @@ jobs:
           git add .
           git reset --hard
 
-      # # Cache
+      # Cache
       - uses: actions/cache@v3
         with:
           path: Library
@@ -46,7 +47,7 @@ jobs:
           restore-keys: |
             Library-
 
-      # # Build
+      # Build
       - name: Build project
         uses: game-ci/unity-builder@v4
         env:
@@ -57,12 +58,14 @@ jobs:
           targetPlatform: ${{ vars.TARGET_PLATFORM }}
           buildsPath: ${{ vars.BUILD_PATH }}
           allowDirtyBuild: true
+
       # Output: Artifact
       - name: Upload Build Artifact
         uses: actions/upload-artifact@v3
         with:
           name: ${{ vars.ARTIFACT_NAME }}
           path: ${{ vars.BUILD_PATH }}
+
       # Deployment
       - name: Stash build result and reset local changes
         run: |
@@ -72,18 +75,17 @@ jobs:
           git config --global user.name "${{ secrets.GH_USERNAME }}"
           echo "Stash and reset"
           git checkout -b build-artifacts
-          git add  -f ${{ vars.BUILD_PATH }}/${{ vars.TARGET_PLATFORM }}
+          git add -f ${{ vars.BUILD_PATH }}/${{ vars.TARGET_PLATFORM }}
           git config advice.addIgnoredFile false
-          git status
           git commit -m 'added: build artifacts'
           git push --set-upstream origin build-artifacts
-          
+
   create_pull_request:
-     needs: build
-     runs-on: ubuntu-latest
-     outputs:
+    needs: build
+    runs-on: ubuntu-latest
+    outputs:
       pull_request_number: ${{ steps.create_pr.outputs.pull-request-number }}
-     steps:
+    steps:
       - name: Checkout Repository
         uses: actions/checkout@v4
 
@@ -99,11 +101,13 @@ jobs:
           body: "This pull request contains the build artifacts."
           labels: "auto-approve"
       
-      - name: Delete Build Artifacts Branch
+      - name: Cleanup - Delete Build Artifacts Branch
         env:
           GITHUB_TOKEN: ${{ secrets.G_TOKEN }}
         run: |
           git push origin --delete build-artifacts
+          git branch -D build-artifacts
 
-
-
+      - name: Cleanup - Remove Build Artifacts
+        run: |
+          rm -rf ${{ vars.BUILD_PATH }}
