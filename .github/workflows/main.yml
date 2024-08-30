@@ -125,7 +125,7 @@ jobs:
 
       - name: Delete Build Artifacts Branch
         env:
-          GITHUB_TOKEN: ${{ secrets.G_TOKEN }}
+          GITHUB_TOKEN: ${{ secrets.PAT }}
         run: |
           git push origin --delete build-artifacts
              rm -rf ${{ vars.BUILD_PATH }}
