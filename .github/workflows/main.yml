@@ -87,14 +87,6 @@ jobs:
       - name: Checkout Repository
         uses: actions/checkout@v4
 
-      - name: Download Build Artifacts
-        uses: actions/download-artifact@v3
-        with:
-          name: artifact
-
-      - name: List Downloaded Artifacts
-        run: ls -l
-
       - name: Create Pull Request
         id: create_pr
         uses: peter-evans/create-pull-request@v5
