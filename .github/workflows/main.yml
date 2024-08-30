@@ -55,7 +55,7 @@ jobs:
           UNITY_EMAIL: ${{ secrets.UNITY_EMAIL }}
           UNITY_PASSWORD: ${{ secrets.UNITY_PASSWORD }}
         with:
-          targetPlatform: ${{ vars.TARGET_PLATFORM }}
+          targetPlatform: ${{ WebGL }}
           buildsPath: ${{ vars.BUILD_PATH }}
           allowDirtyBuild: true
 
@@ -75,7 +75,7 @@ jobs:
           git config --global user.name "${{ secrets.GH_USERNAME }}"
           echo "Stash and reset"
           git checkout -b build-artifacts
-          git add -f ${{ vars.BUILD_PATH }}/${{ vars.TARGET_PLATFORM }}
+          git add -f ${{ vars.BUILD_PATH }}
           git config advice.addIgnoredFile false
           git commit -m 'added: build artifacts'
           git push --set-upstream origin build-artifacts
