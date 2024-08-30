@@ -5,7 +5,7 @@ on:
       - 'Develop'
   workflow_dispatch:
 permissions:
-  contents: write  # Allow write access to the contents.
+  contents: read
   pages: write
   id-token: write
 concurrency:
@@ -20,8 +20,7 @@ jobs:
       - name: Checkout repository
         uses: actions/checkout@v4
         with:
-          token: ${{ secrets.PAT }}
-
+          token: ${{secrets.PAT}}
       # Git LFS
       - name: Create LFS file list
         run: git lfs ls-files -l | cut -d' ' -f1 | sort > .lfs-assets-id
@@ -39,7 +38,7 @@ jobs:
           git add .
           git reset --hard
 
-      # Cache
+      # # Cache
       - uses: actions/cache@v3
         with:
           path: Library
@@ -47,7 +46,7 @@ jobs:
           restore-keys: |
             Library-
 
-      # Build
+      # # Build
       - name: Build project
         uses: game-ci/unity-builder@v4
         env:
@@ -55,17 +54,15 @@ jobs:
           UNITY_EMAIL: ${{ secrets.UNITY_EMAIL }}
           UNITY_PASSWORD: ${{ secrets.UNITY_PASSWORD }}
         with:
-          targetPlatform: WebGL 
+          targetPlatform: ${{ vars.TARGET_PLATFORM }}
           buildsPath: ${{ vars.BUILD_PATH }}
           allowDirtyBuild: true
-
       # Output: Artifact
       - name: Upload Build Artifact
         uses: actions/upload-artifact@v3
         with:
           name: ${{ vars.ARTIFACT_NAME }}
           path: ${{ vars.BUILD_PATH }}
-
       # Deployment
       - name: Stash build result and reset local changes
         run: |
@@ -74,58 +71,9 @@ jobs:
           git config --global user.email "${{ secrets.GH_EMAIL }}"
           git config --global user.name "${{ secrets.GH_USERNAME }}"
           echo "Stash and reset"
-          git checkout -b build-artifacts
-          git add -f ${{ vars.BUILD_PATH }}
+          cd ${{ vars.BUILD_PATH }}/${{ vars.TARGET_PLATFORM }}
+          git add  -f .
           git config advice.addIgnoredFile false
-          git commit -m 'added: build artifacts'
-          git push --set-upstream origin build-artifacts
-          
-      - name: Verify Branch Creation
-        run: git branch -a
-
-  create_pull_request:
-    needs: build
-    runs-on: ubuntu-latest
-    outputs:
-      pull_request_number: ${{ steps.create_pr.outputs.pull-request-number }}
-    steps:
-      - name: Checkout Repository
-        uses: actions/checkout@v4
-
-      - name: Create Pull Request
-        id: create_pr
-        uses: peter-evans/create-pull-request@v5
-        with:
-          token: ${{ secrets.PAT }}  # Use PAT here instead of GITHUB_TOKEN
-          commit-message: "added: build artifacts"
-          branch: build-artifacts
-          base: DevBuild
-          title: "Add build artifacts"
-          body: "This pull request contains the build artifacts."
-          labels: "auto-approve"
-      
-  merge_pull_request:
-    needs: create_pull_request
-    runs-on: ubuntu-latest
-    steps:
-      - name: Merge Pull Request
-        run: |
-          PR_NUMBER="${{ needs.create_pull_request.outputs.pull_request_number }}"
-          curl -X PUT \
-            -H "Authorization: token ${{ secrets.PAT }}" \
-            -H "Accept: application/vnd.github.v3+json" \
-            https://api.github.com/repos/${{ github.repository }}/pulls/${PR_NUMBER}/merge
-  cleanup:
-    if: ${{ always() }}
-    needs: [merge_pull_request, build]
-    runs-on: ubuntu-latest
-    steps:
-      - name: Checkout Repository
-        uses: actions/checkout@v4
-
-      - name: Delete Build Artifacts Branch
-        env:
-          GITHUB_TOKEN: ${{ secrets.PAT }}
-        run: |
-          git push origin --delete build-artifacts
-             rm -rf ${{ vars.BUILD_PATH }}
+          git status
+          git commit -m "Build"
+          git push origin HEAD:DevBuild
