@@ -1,52 +1,34 @@
-name: Unity WebGL Automatic Build 👽✨🚀
+name: Build Unity Project and Create Pull Request
+
 on:
-  pull_request:
-    branches:    
-      - 'Develop'
-  workflow_dispatch:
-permissions:
-  contents: read
-  pages: write
-  id-token: write
-concurrency:
-  group: "pages"
-  cancel-in-progress: false
+  push:
+    branches:
+      - Develop
+
 jobs:
   build:
-    name: Unity Build 👽
     runs-on: ubuntu-latest
+
     steps:
-      # Checkout (without LFS)
-      - name: Checkout repository
-        uses: actions/checkout@v4
+      - name: Checkout repository with LFS
+        uses: actions/checkout@v3
         with:
-          token: ${{secrets.PAT}}
-      # Git LFS
-      - name: Create LFS file list
-        run: git lfs ls-files -l | cut -d' ' -f1 | sort > .lfs-assets-id
+          lfs: true
 
-      - name: Restore LFS cache
+      - name: Cache Unity packages
         uses: actions/cache@v3
-        id: lfs-cache
         with:
-          path: .git/lfs
-          key: ${{ runner.os }}-lfs-${{ hashFiles('.lfs-assets-id') }}
-
-      - name: Git LFS Pull
-        run: |
-          git lfs pull
-          git add .
-          git reset --hard
-
-      # # Cache
-      - uses: actions/cache@v3
-        with:
-          path: Library
-          key: Library-${{ hashFiles('Assets/**', 'Packages/**', 'ProjectSettings/**') }}
+          path: Library/PackageCache
+          key: ${{ runner.os }}-unity-packages-${{ hashFiles('**/Packages/manifest.json') }}
           restore-keys: |
-            Library-
+            ${{ runner.os }}-unity-packages-
 
-      # # Build
+      - name: Clean previous build artifacts
+        run: |
+          if [ -d "build/WebGL" ]; then
+            rm -rf build/WebGL
+          fi
+
       - name: Build project
         uses: game-ci/unity-builder@v4
         env:
@@ -54,26 +36,72 @@ jobs:
           UNITY_EMAIL: ${{ secrets.UNITY_EMAIL }}
           UNITY_PASSWORD: ${{ secrets.UNITY_PASSWORD }}
         with:
-          targetPlatform: ${{ vars.TARGET_PLATFORM }}
-          buildsPath: ${{ vars.BUILD_PATH }}
-          allowDirtyBuild: true
-      # Output: Artifact
-      - name: Upload Build Artifact
+          projectPath: .
+          targetPlatform: WebGL
+
+      - name: Upload WebGL Build
         uses: actions/upload-artifact@v3
         with:
-          name: ${{ vars.ARTIFACT_NAME }}
-          path: ${{ vars.BUILD_PATH }}
-      # Deployment
-      - name: Stash build result and reset local changes
+          name: WebGLBuild
+          path: build/WebGL
+
+      - name: Checkout Develop branch
+        uses: actions/checkout@v3
+        with:
+          ref: Develop
+
+      - name: Download WebGL Build Artifact
+        uses: actions/download-artifact@v3
+        with:
+          name: WebGLBuild
+
+      - name: Configure Git
         run: |
-          echo "Applying initial configs"
-          sudo chown -R $USER:$USER ${{ vars.BUILD_PATH }}
-          git config --global user.email "${{ secrets.GH_EMAIL }}"
-          git config --global user.name "${{ secrets.GH_USERNAME }}"
-          echo "Stash and reset"
-          cd ${{ vars.BUILD_PATH }}/${{ vars.TARGET_PLATFORM }}
-          git add  -f .
-          git config advice.addIgnoredFile false
-          git status
-          git commit -m "Build"
-          git push --force origin HEAD:DevBuild
+          git config user.name "GitHub Actions"
+          git config user.email "actions@github.com"
+
+      - name: Create Build Branch
+        run: |
+          BRANCH_NAME="Build-$(date +%s)"
+          git checkout -b $BRANCH_NAME
+          mkdir -p build/WebGL
+          mv WebGLBuild/* build/WebGL/
+          git add build/WebGL
+          git commit -m "Add WebGL build artifacts"
+          git push origin $BRANCH_NAME
+          echo "::set-output name=branch_name::$BRANCH_NAME"
+
+      - name: Create Pull Request
+        uses: peter-evans/create-pull-request@v5
+        with:
+          token: ${{ secrets.GITHUB_TOKEN }}
+          base: DevBuild
+          head: ${{ steps.create_build_branch.outputs.branch_name }}
+          title: "Update DevBuild with latest WebGL build artifacts"
+          body: "This PR includes the latest WebGL build artifacts."
+          draft: false
+
+      - name: Merge Pull Request
+        uses: github-script@v6
+        with:
+          script: |
+            const pr = await github.rest.pulls.list({
+              owner: context.repo.owner,
+              repo: context.repo.repo,
+              head: context.actor + ":" + process.env.BRANCH_NAME,
+              base: "DevBuild",
+              state: "open"
+            });
+            if (pr.data.length > 0) {
+              await github.rest.pulls.merge({
+                owner: context.repo.owner,
+                repo: context.repo.repo,
+                pull_number: pr.data[0].number,
+                merge_method: "merge"
+              });
+            }
+
+      - name: Delete Build Branch
+        if: success()
+        run: |
+          git push origin --delete $BRANCH_NAME
