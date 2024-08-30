@@ -104,13 +104,28 @@ jobs:
           body: "This pull request contains the build artifacts."
           labels: "auto-approve"
       
-      - name: Cleanup - Delete Build Artifacts Branch
+  merge_pull_request:
+    needs: create_pull_request
+    runs-on: ubuntu-latest
+    steps:
+      - name: Merge Pull Request
+        run: |
+          PR_NUMBER="${{ needs.create_pull_request.outputs.pull_request_number }}"
+          curl -X PUT \
+            -H "Authorization: token ${{ secrets.G_TOKEN }}" \
+            -H "Accept: application/vnd.github.v3+json" \
+            https://api.github.com/repos/${{ github.repository }}/pulls/${PR_NUMBER}/merge
+  cleanup:
+    if: ${{ always() }}
+    needs: [merge_pull_request, build]
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout Repository
+        uses: actions/checkout@v4
+
+      - name: Delete Build Artifacts Branch
         env:
-          GITHUB_TOKEN: ${{ secrets.PAT }}  # Use PAT here instead of GITHUB_TOKEN
+          GITHUB_TOKEN: ${{ secrets.G_TOKEN }}
         run: |
           git push origin --delete build-artifacts
-          git branch -D build-artifacts
-
-      - name: Cleanup - Remove Build Artifacts
-        run: |
-          rm -rf ${{ vars.BUILD_PATH }}
+             rm -rf ${{ vars.BUILD_PATH }}
