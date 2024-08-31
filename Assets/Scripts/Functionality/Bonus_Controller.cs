@@ -11,7 +11,7 @@ public class Bonus_Controller : MonoBehaviour
     [SerializeField] private Button[] chest;
     [SerializeField] private ImageAnimation[] chestAnim;
     [SerializeField] private TMP_Text[] reward_text;
-    [SerializeField] private List<int> resultData;
+    private List<int> resultData= new List<int>();
     [SerializeField] private GameObject bonusObject;
 
     public int openCount;
@@ -77,7 +77,8 @@ public class Bonus_Controller : MonoBehaviour
         if (isfinished) return;
         if (opening) return;
         audioController.PlayButtonAudio();
-
+        // if(resultData.Count==0)
+        // return;
         StartCoroutine(chestOpenRoutine(index));
 
     }
@@ -90,7 +91,7 @@ public class Bonus_Controller : MonoBehaviour
         chest[index].interactable = false;
         bool gameFinishied = false;
         chestAnim[index].transform.DOShakePosition(3f, new Vector3(15,0,0), 30, 90,true);
-        yield return new WaitForSeconds(3f);
+        yield return new WaitForSeconds(1.5f);
         audioController.StopApinBonusAudio();
         chestAnim[index].StartAnimation();
 
@@ -107,7 +108,7 @@ public class Bonus_Controller : MonoBehaviour
             gameFinishied = true;
             
         }
-        reward_text[index].color =Color.black;
+        // reward_text[index].color =Color.black;
         reward_text[index].transform.localScale = Vector3.zero;
         reward_text[index].gameObject.SetActive(true);
         reward_text[index].transform.DOScale(1, 0.8f);
