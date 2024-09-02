@@ -34,6 +34,7 @@ public class SocketIOManager : MonoBehaviour
 
     protected string SocketURI = null;
     protected string TestSocketURI = "https://dev.casinoparadize.com";
+    // protected string TestSocketURI = "https://jmn3wfcb-5000.inc1.devtunnels.ms/";
     //protected string SocketURI = "http://localhost:5000";
 
     [SerializeField]

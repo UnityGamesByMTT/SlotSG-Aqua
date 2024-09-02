@@ -163,7 +163,7 @@ public class SlotBehaviour : MonoBehaviour
     internal bool CheckPopups = false;
     private double bet = 0;
     private double balance = 0;
-    private bool IsFreeSpin = false;
+    [SerializeField]private bool IsFreeSpin = false;
     private double currentBalance = 0;
     private double currentTotalBet = 0;
 
@@ -171,7 +171,7 @@ public class SlotBehaviour : MonoBehaviour
 
     private void Start()
     {
-        IsAutoSpin = false;
+        // IsAutoSpin = false;
         if (Lines_text != null)
         {
             Lines_text.text = "20";
@@ -224,6 +224,7 @@ public class SlotBehaviour : MonoBehaviour
 
     internal void FreeSpin(int spins)
     {
+
         if (!IsFreeSpin)
         {
 
@@ -243,12 +244,14 @@ public class SlotBehaviour : MonoBehaviour
     private IEnumerator FreeSpinCoroutine(int spinchances)
     {
         int i = 0;
-        while (i < FreeSpins)
+        Debug.Log("entered in loop"+spinchances);
+        while (i < spinchances)
         {
+
             i++;
-            uiManager.updateFreeSPinData(1 - ((float)i / (float)FreeSpins), FreeSpins - i);
+            uiManager.updateFreeSPinData(1 - ((float)i / (float)spinchances), spinchances - i);
             yield return new WaitForSeconds(0.2f);
-            StartSlots(IsAutoSpin);
+            StartSlots(IsFreeSpin);
             yield return tweenroutine;
         }
         FreeSpins = 0;
@@ -529,7 +532,7 @@ public class SlotBehaviour : MonoBehaviour
 
     internal void SetInitialUI()
     {
-        BetCounter = SocketManager.initialData.Bets.Count - 1;
+        BetCounter = 0;
         if (TotalBet_text) TotalBet_text.text = ((SocketManager.initialData.Bets[BetCounter] * SocketManager.initialData.Lines.Count)).ToString();
         if (BetPerLine_text) BetPerLine_text.text = SocketManager.initialData.Bets[BetCounter].ToString();
         if (Lines_text) Lines_text.text = SocketManager.initialData.Lines.Count.ToString();
@@ -791,6 +794,7 @@ public class SlotBehaviour : MonoBehaviour
             yield return new WaitUntil(() => bonus_Controller.isfinished);
             yield return new WaitForSeconds(1f);
             bonus_Controller.FinishBonusGame();
+            CheckPopups=false;
 
         }
         else if (SocketManager.resultData.WinAmout >= currentTotalBet * 10 && SocketManager.resultData.WinAmout < currentTotalBet * 15 && SocketManager.resultData.jackpot == 0)
@@ -850,7 +854,7 @@ public class SlotBehaviour : MonoBehaviour
                 yield return new WaitForSeconds(0.1f);
             }
             yield return new WaitForSeconds(1.0f);
-            FreeSpin(FreeSpins);
+            FreeSpin((int)SocketManager.resultData.freeSpins.count);
         }
     }
 
