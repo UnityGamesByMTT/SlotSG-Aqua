@@ -200,7 +200,7 @@ public class SlotBehaviour : MonoBehaviour
         if (AutoSpinStop_Button) AutoSpinStop_Button.onClick.AddListener(StopAutoSpin);
 
         tweenHeight = (myImages.Length * IconSizeFactor) - 280;
-        ToggleMinusPlusButton(1);
+        ToggleMinusPlusButton(0);
     }
 
     internal void AutoSpin()
