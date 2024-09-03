@@ -90,8 +90,8 @@ public class Bonus_Controller : MonoBehaviour
         openIndex.Add(index);
         chest[index].interactable = false;
         bool gameFinishied = false;
-        chestAnim[index].transform.DOShakePosition(3f, new Vector3(15,0,0), 30, 90,true);
-        yield return new WaitForSeconds(1.5f);
+        chestAnim[index].transform.DOShakePosition(1f, new Vector3(15,0,0), 30, 90,true);
+        yield return new WaitForSeconds(1f);
         audioController.StopApinBonusAudio();
         chestAnim[index].StartAnimation();
 
@@ -117,7 +117,6 @@ public class Bonus_Controller : MonoBehaviour
         reward_text[index].gameObject.SetActive(false);
         reward_text[index].transform.localPosition = new Vector3(-50, -42);
         openCount++;
-        opening = false;
         audioController.StopWLAaudio();
 
         if (gameFinishied) {
@@ -130,6 +129,7 @@ public class Bonus_Controller : MonoBehaviour
             isfinished = true;
 
         }
+        opening = false;
 
 
 
