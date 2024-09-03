@@ -328,9 +328,11 @@ public class UIManager : MonoBehaviour
 
     internal void setFreeSpinData(int count)
     {
+        if(count>0){
 
         freeSpinBar.DOFillAmount(1, 0.2f).SetEase(Ease.Linear);
         freeSpinBarHandle.DOAnchorPosX(510, 0.2f).SetEase(Ease.Linear);
+        }
         freeSpinCount.text = count.ToString();
     }
 

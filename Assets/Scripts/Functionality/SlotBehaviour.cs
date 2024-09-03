@@ -151,7 +151,7 @@ public class SlotBehaviour : MonoBehaviour
     [SerializeField] private UIManager uiManager;
     [SerializeField] private Bonus_Controller bonus_Controller;
 
-
+    [SerializeField] private int FreeSpinss = 5;
     Coroutine AutoSpinRoutine = null;
     Coroutine tweenroutine;
     Coroutine FreeSpinRoutine = null;
@@ -163,7 +163,7 @@ public class SlotBehaviour : MonoBehaviour
     internal bool CheckPopups = false;
     private double bet = 0;
     private double balance = 0;
-    [SerializeField]private bool IsFreeSpin = false;
+    [SerializeField] private bool IsFreeSpin = false;
     private double currentBalance = 0;
     private double currentTotalBet = 0;
 
@@ -244,19 +244,19 @@ public class SlotBehaviour : MonoBehaviour
     private IEnumerator FreeSpinCoroutine(int spinchances)
     {
         int i = 0;
-        Debug.Log("entered in loop"+spinchances);
+        Debug.Log("entered in loop" + spinchances);
         while (i < spinchances)
         {
 
             i++;
             uiManager.updateFreeSPinData(1 - ((float)i / (float)spinchances), spinchances - i);
             yield return new WaitForSeconds(0.2f);
-            StartSlots(IsFreeSpin);
+            StartSlots(IsAutoSpin);
             yield return tweenroutine;
         }
         FreeSpins = 0;
-        ToggleButtonGrp(true);
         IsFreeSpin = false;
+        ToggleButtonGrp(true);
     }
 
     private void StopAutoSpin()
@@ -794,7 +794,7 @@ public class SlotBehaviour : MonoBehaviour
             yield return new WaitUntil(() => bonus_Controller.isfinished);
             yield return new WaitForSeconds(1f);
             bonus_Controller.FinishBonusGame();
-            CheckPopups=false;
+            CheckPopups = false;
 
         }
         else if (SocketManager.resultData.WinAmout >= currentTotalBet * 10 && SocketManager.resultData.WinAmout < currentTotalBet * 15 && SocketManager.resultData.jackpot == 0)
@@ -825,16 +825,7 @@ public class SlotBehaviour : MonoBehaviour
             WinningsAnim(true);
 
 
-        if (!IsAutoSpin)
-        {
-            ToggleButtonGrp(true);
-            IsSpinning = false;
-        }
-        else
-        {
-            yield return new WaitForSeconds(2f);
-            IsSpinning = false;
-        }
+
 
         if (SocketManager.resultData.freeSpins.isNewAdded)
         {
@@ -855,6 +846,17 @@ public class SlotBehaviour : MonoBehaviour
             }
             yield return new WaitForSeconds(1.0f);
             FreeSpin((int)SocketManager.resultData.freeSpins.count);
+        }
+
+        if (!IsAutoSpin && !IsFreeSpin)
+        {
+            ToggleButtonGrp(true);
+            IsSpinning = false;
+        }
+        else
+        {
+            yield return new WaitForSeconds(2f);
+            IsSpinning = false;
         }
     }
 
@@ -944,7 +946,7 @@ public class SlotBehaviour : MonoBehaviour
 
         List<int> y_points = null;
         List<int> points_anim = null;
-        if (LineId.Count > 0 || points_AnimString.Count>0)
+        if (LineId.Count > 0 || points_AnimString.Count > 0)
         {
             if (audioController) audioController.PlayWLAudio("win");
 
