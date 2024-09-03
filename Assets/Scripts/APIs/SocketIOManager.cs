@@ -33,8 +33,8 @@ public class SocketIOManager : MonoBehaviour
     internal JSHandler _jsManager;
 
     protected string SocketURI = null;
-    // protected string TestSocketURI = "https://dev.casinoparadize.com";
-    protected string TestSocketURI = "https://jmn3wfcb-5000.inc1.devtunnels.ms/";
+    protected string TestSocketURI = "https://dev.casinoparadize.com";
+    // protected string TestSocketURI = "https://jmn3wfcb-5000.inc1.devtunnels.ms/";
     // protected string TestSocketURI = "https://7p68wzhv-5000.inc1.devtunnels.ms/";
     // protected string TestSocketURI = "https://jmn3wfcb-5000.inc1.devtunnels.ms/";
     // protected string TestSocketURI = "http://localhost:5000";
@@ -42,7 +42,7 @@ public class SocketIOManager : MonoBehaviour
     [SerializeField]
     private string TestToken;
 
-    protected string gameID = "";
+    protected string gameID = "SL_AQUA";
     internal bool isLoading;
 
     internal bool SetInit=false;
