@@ -35,12 +35,14 @@ public class SocketIOManager : MonoBehaviour
     protected string SocketURI = null;
     protected string TestSocketURI = "https://dev.casinoparadize.com";
     // protected string TestSocketURI = "https://jmn3wfcb-5000.inc1.devtunnels.ms/";
-    //protected string SocketURI = "http://localhost:5000";
+    // protected string TestSocketURI = "https://7p68wzhv-5000.inc1.devtunnels.ms/";
+    // protected string TestSocketURI = "https://jmn3wfcb-5000.inc1.devtunnels.ms/";
+    // protected string TestSocketURI = "http://localhost:5000";
 
     [SerializeField]
     private string TestToken;
 
-    protected string gameID = "SL-AQUA";
+    protected string gameID = "SL_AQUA";
     internal bool isLoading;
 
     internal bool SetInit=false;
