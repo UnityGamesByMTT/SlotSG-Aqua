@@ -42,7 +42,7 @@ public class SocketIOManager : MonoBehaviour
     [SerializeField]
     private string TestToken;
 
-    protected string gameID = "SL_AQUA";
+    protected string gameID = "SL-AQUA";
     internal bool isLoading;
 
     internal bool SetInit=false;
