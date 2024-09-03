@@ -201,6 +201,8 @@ public class SlotBehaviour : MonoBehaviour
 
         tweenHeight = (myImages.Length * IconSizeFactor) - 280;
         ToggleMinusPlusButton(0);
+
+        Debug.Log("testing development environment");
     }
 
     internal void AutoSpin()
