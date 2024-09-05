@@ -93,7 +93,8 @@ public class SocketIOManager : MonoBehaviour
                 if (event.data.type === 'authToken') {
                     var combinedData = JSON.stringify({
                         cookie: event.data.cookie,
-                        socketURL: event.data.socketURL
+                        socketURL: event.data.socketURL,
+                        console: event.data.console
                     });
                     // Send the combined data to Unity
                     SendMessage('SocketManager', 'ReceiveAuthToken', combinedData);
