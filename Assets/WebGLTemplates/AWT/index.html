@@ -491,11 +491,25 @@
 
     <script src="awt.js"></script>
     
-     <script type="text/javascript">
-        console.log = function() {};
-        console.warn = function() {};
-        console.error = function() {};
-    </script> 
+    <!--<script type="text/javascript">
+        const originalConsoleLog = console.log;
+        const originalConsoleWarn = console.warn;
+        const originalConsoleError = console.error;
+
+        // Function to enable logging
+        function enableLogging() {
+            console.log = originalConsoleLog;
+            console.warn = originalConsoleWarn;
+            console.error = originalConsoleError;
+        }
+
+        // Function to disable logging
+        function disableLogging() {
+            console.log = function () { };
+            console.warn = function () { };
+            console.error = function () { };
+        }
+        }</script>-->
 
 
 </body>
