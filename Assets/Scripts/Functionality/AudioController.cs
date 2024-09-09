@@ -61,16 +61,17 @@ public class AudioController : MonoBehaviour
     {
         if (!focus)
         {
-
             bg_adudio.Pause();
             audioPlayer_wl.Pause();
             audioPlayer_button.Pause();
+            audioPlayer_Spin.Pause();
         }
         else
         {
-            if (!bg_adudio.mute) bg_adudio.Play();
-            if (!audioPlayer_wl.mute) audioPlayer_wl.Play();
-            if (!audioPlayer_button.mute) audioPlayer_button.Play();
+            if (!bg_adudio.mute) bg_adudio.UnPause();
+            if (!audioPlayer_wl.mute) audioPlayer_wl.UnPause();
+            if (!audioPlayer_button.mute) audioPlayer_button.UnPause();
+            if (!audioPlayer_Spin.mute) audioPlayer_Spin.UnPause();
 
         }
     }
@@ -106,8 +107,6 @@ public class AudioController : MonoBehaviour
     }
     internal void playBgAudio(string type = "normal")
     {
-
-
         //int randomIndex = UnityEngine.Random.Range(0, Bg_Audio.Length);
         if (bg_adudio)
         {

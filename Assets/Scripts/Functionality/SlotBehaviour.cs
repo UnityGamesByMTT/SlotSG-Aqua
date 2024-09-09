@@ -771,8 +771,10 @@ public class SlotBehaviour : MonoBehaviour
         {
             yield return StopTweening(5, Slot_Transform[i], i);
         }
+        if(audioController) audioController.StopApinBonusAudio();
+        if(audioController) audioController.StopWLAaudio();
+        
         yield return new WaitForSeconds(0.5f);
-
         CheckPayoutLineBackend(SocketManager.resultData.linesToEmit, SocketManager.resultData.FinalsymbolsToEmit);
         KillAllTweens();
 
@@ -795,7 +797,6 @@ public class SlotBehaviour : MonoBehaviour
             yield return new WaitForSeconds(1f);
             bonus_Controller.FinishBonusGame();
             CheckPopups = false;
-
         }
         else if (SocketManager.resultData.WinAmout >= currentTotalBet * 10 && SocketManager.resultData.WinAmout < currentTotalBet * 15 && SocketManager.resultData.jackpot == 0)
         {
