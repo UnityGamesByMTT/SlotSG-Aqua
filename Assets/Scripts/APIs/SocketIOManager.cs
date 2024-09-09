@@ -12,9 +12,14 @@ using Best.SocketIO;
 using Best.SocketIO.Events;
 using Newtonsoft.Json.Linq;
 using System.Runtime.Serialization;
+using System.Runtime.InteropServices;
 
 public class SocketIOManager : MonoBehaviour
 {
+
+    [DllImport("__Internal")]
+    private static extern void delayHideLoadingScreen();
+
     [SerializeField] private SlotBehaviour slotManager;
     [SerializeField] private UIManager uIManager;
 
@@ -46,7 +51,7 @@ public class SocketIOManager : MonoBehaviour
     protected string gameID = "SL-AQUA";
     internal bool isLoading;
 
-    internal bool SetInit=false;
+    internal bool SetInit = false;
     private const int maxReconnectionAttempts = 6;
     private readonly TimeSpan reconnectionDelay = TimeSpan.FromSeconds(10);
 
@@ -309,6 +314,9 @@ public class SocketIOManager : MonoBehaviour
         Application.ExternalCall("window.parent.postMessage", "OnEnter", "*");
 
         isLoading = false;
+#if UNITY_WEBGL && !UNITY_EDITOR
+        delayHideLoadingScreen();
+#endif
 
     }
 
