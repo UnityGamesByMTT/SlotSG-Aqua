@@ -156,15 +156,25 @@ public class UIManager : MonoBehaviour
     [SerializeField] private Button Close_Button;
     [SerializeField] private GameObject LowBalancePopup_Object;
 
+    [SerializeField]  private Button m_AwakeGameButton;
+
     private bool isExit = false;
 
 
     private void Awake()
     {
-        if (spalsh_screen) spalsh_screen.SetActive(true);
-        StartCoroutine(LoadingRoutine());
+        // if (spalsh_screen) spalsh_screen.SetActive(true);
+        // StartCoroutine(LoadingRoutine());
+        SimulateClickByDefault();
+
     }
 
+    private void SimulateClickByDefault()
+    {
+        Debug.Log("Awaken The Game...");
+        m_AwakeGameButton.onClick.AddListener(() => { Debug.Log("Called The Game..."); });
+        m_AwakeGameButton.onClick.Invoke();
+    }
     private void Start()
     {
 
@@ -215,10 +225,10 @@ public class UIManager : MonoBehaviour
         if (GameExit_Button) GameExit_Button.onClick.AddListener(CallOnExitFunction);
 
         if (no_Button) no_Button.onClick.RemoveAllListeners();
-        if (no_Button) no_Button.onClick.AddListener(delegate { ClosePopup(QuitPopupObject); });
+        if (no_Button) no_Button.onClick.AddListener(delegate { if(!isExit){ClosePopup(QuitPopupObject);} });
 
         if (cancel_Button) cancel_Button.onClick.RemoveAllListeners();
-        if (cancel_Button) cancel_Button.onClick.AddListener(delegate { ClosePopup(QuitPopupObject); });
+        if (cancel_Button) cancel_Button.onClick.AddListener(delegate {  if (!isExit){ClosePopup(QuitPopupObject);} });
 
         if (Close_Button) Close_Button.onClick.RemoveAllListeners();
         if (Close_Button) Close_Button.onClick.AddListener(delegate { ClosePopup(LowBalancePopup_Object); });
@@ -468,10 +478,11 @@ public class UIManager : MonoBehaviour
     private void CallOnExitFunction()
     {
         isExit = true;
+
         audioController.PlayButtonAudio();
         socketManager.CloseSocket();
-        //slotManager.CallCloseSocket();
-        Application.ExternalCall("window.parent.postMessage", "onExit", "*");
+        // slotManager.CallCloseSocket();
+        // Application.ExternalCall("window.parent.postMessage", "onExit", "*");
     }
 
     private void OpenMenu()
