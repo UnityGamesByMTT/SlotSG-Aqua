@@ -17,9 +17,6 @@ using System.Runtime.InteropServices;
 public class SocketIOManager : MonoBehaviour
 {
 
-    [DllImport("__Internal")]
-    private static extern void delayHideLoadingScreen();
-
     [SerializeField] private SlotBehaviour slotManager;
     [SerializeField] private UIManager uIManager;
 
@@ -310,13 +307,9 @@ public class SocketIOManager : MonoBehaviour
         }
 
         slotManager.SetInitialUI();
-
+        isLoading = false;
         Application.ExternalCall("window.parent.postMessage", "OnEnter", "*");
 
-        isLoading = false;
-#if UNITY_WEBGL && !UNITY_EDITOR
-        delayHideLoadingScreen();
-#endif
 
     }
 
