@@ -12,9 +12,11 @@ using Best.SocketIO;
 using Best.SocketIO.Events;
 using Newtonsoft.Json.Linq;
 using System.Runtime.Serialization;
+using System.Runtime.InteropServices;
 
 public class SocketIOManager : MonoBehaviour
 {
+
     [SerializeField] private SlotBehaviour slotManager;
     [SerializeField] private UIManager uIManager;
 
@@ -33,7 +35,8 @@ public class SocketIOManager : MonoBehaviour
     internal JSHandler _jsManager;
 
     protected string SocketURI = null;
-    protected string TestSocketURI = "https://dev.casinoparadize.com";
+    protected string TestSocketURI = "https://game-crm-rtp-backend.onrender.com/";
+    // protected string TestSocketURI = "https://dev.casinoparadize.com";
     // protected string TestSocketURI = "https://jmn3wfcb-5000.inc1.devtunnels.ms/";
     // protected string TestSocketURI = "https://7p68wzhv-5000.inc1.devtunnels.ms/";
     // protected string TestSocketURI = "https://jmn3wfcb-5000.inc1.devtunnels.ms/";
@@ -45,7 +48,7 @@ public class SocketIOManager : MonoBehaviour
     protected string gameID = "SL-AQUA";
     internal bool isLoading;
 
-    internal bool SetInit=false;
+    internal bool SetInit = false;
     private const int maxReconnectionAttempts = 6;
     private readonly TimeSpan reconnectionDelay = TimeSpan.FromSeconds(10);
 
@@ -228,14 +231,14 @@ public class SocketIOManager : MonoBehaviour
     internal void CloseSocket()
     {
         SendDataWithNamespace("EXIT");
-        DOVirtual.DelayedCall(0.1f, () =>
-        {
-            if (this.manager != null)
-            {
-                Debug.Log("Dispose my Socket");
-                this.manager.Close();
-            }
-        });
+        // DOVirtual.DelayedCall(0.1f, () =>
+        // {
+        //     if (this.manager != null)
+        //     {
+        //         Debug.Log("Dispose my Socket");
+        //         this.manager.Close();
+        //     }
+        // });
     }
 
     private void ParseResponse(string jsonObject)
@@ -277,6 +280,16 @@ public class SocketIOManager : MonoBehaviour
                     isResultdone = true;
                     break;
                 }
+            case "ExitUser":
+                {
+                    if (this.manager != null)
+                    {
+                        Debug.Log("Dispose my Socket");
+                        this.manager.Close();
+                    }
+                    Application.ExternalCall("window.parent.postMessage", "onExit", "*");
+                    break;
+                }
         }
     }
 
@@ -294,10 +307,9 @@ public class SocketIOManager : MonoBehaviour
         }
 
         slotManager.SetInitialUI();
-
+        isLoading = false;
         Application.ExternalCall("window.parent.postMessage", "OnEnter", "*");
 
-        isLoading = false;
 
     }
 

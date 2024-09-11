@@ -201,6 +201,8 @@ public class SlotBehaviour : MonoBehaviour
 
         tweenHeight = (myImages.Length * IconSizeFactor) - 280;
         ToggleMinusPlusButton(0);
+
+        Debug.Log("testing development environment");
     }
 
     internal void AutoSpin()
@@ -211,7 +213,7 @@ public class SlotBehaviour : MonoBehaviour
             IsAutoSpin = true;
             if (AutoSpinStop_Button) AutoSpinStop_Button.gameObject.SetActive(true);
             //if (AutoSpin_Button) AutoSpin_Button.gameObject.SetActive(false);
-
+            ToggleButtonGrp(false);
             if (AutoSpinRoutine != null)
             {
                 StopCoroutine(AutoSpinRoutine);
@@ -299,8 +301,11 @@ public class SlotBehaviour : MonoBehaviour
 
     internal void StartSpinRoutine()
     {
-        IsHoldSpin = false;
-        Invoke("AutoSpinHold", 2f);
+        if (!IsSpinning)
+        {
+            IsHoldSpin = false;
+            Invoke("AutoSpinHold", 2f);
+        }
     }
 
     internal void StopSpinRoutine()
@@ -771,8 +776,10 @@ public class SlotBehaviour : MonoBehaviour
         {
             yield return StopTweening(5, Slot_Transform[i], i);
         }
+        if(audioController) audioController.StopApinBonusAudio();
+        if(audioController) audioController.StopWLAaudio();
+        
         yield return new WaitForSeconds(0.5f);
-
         CheckPayoutLineBackend(SocketManager.resultData.linesToEmit, SocketManager.resultData.FinalsymbolsToEmit);
         KillAllTweens();
 
@@ -795,7 +802,6 @@ public class SlotBehaviour : MonoBehaviour
             yield return new WaitForSeconds(1f);
             bonus_Controller.FinishBonusGame();
             CheckPopups = false;
-
         }
         else if (SocketManager.resultData.WinAmout >= currentTotalBet * 10 && SocketManager.resultData.WinAmout < currentTotalBet * 15 && SocketManager.resultData.jackpot == 0)
         {
