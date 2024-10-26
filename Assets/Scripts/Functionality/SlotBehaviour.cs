@@ -683,7 +683,6 @@ public class SlotBehaviour : MonoBehaviour
 
         WinningsAnim(false);
 
-        if (SlotStart_Button) SlotStart_Button.interactable = false;
         if (TempList.Count > 0)
         {
             StopGameAnimation();
@@ -713,6 +712,7 @@ public class SlotBehaviour : MonoBehaviour
                 StopAutoSpin();
                 yield return new WaitForSeconds(1f);
             }
+            ToggleButtonGrp(true);
             yield break;
         }
 
@@ -876,14 +876,14 @@ public class SlotBehaviour : MonoBehaviour
         if (currentBalance < currentTotalBet)
         {
             uiManager.LowBalPopup();
-            if (AutoSpin_Button) AutoSpin_Button.interactable = false;
-            if (SlotStart_Button) SlotStart_Button.interactable = false;
+            // if (AutoSpin_Button) AutoSpin_Button.interactable = false;
+            // if (SlotStart_Button) SlotStart_Button.interactable = false;
         }
-        else
-        {
-            if (AutoSpin_Button) AutoSpin_Button.interactable = true;
-            if (SlotStart_Button) SlotStart_Button.interactable = true;
-        }
+        // else
+        // {
+        //     if (AutoSpin_Button) AutoSpin_Button.interactable = true;
+        //     if (SlotStart_Button) SlotStart_Button.interactable = true;
+        // }
     }
 
     void ToggleButtonGrp(bool toggle)
