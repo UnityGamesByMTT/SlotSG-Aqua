@@ -156,11 +156,22 @@ public class UIManager : MonoBehaviour
     [SerializeField] private Button Close_Button;
     [SerializeField] private GameObject LowBalancePopup_Object;
 
-    [SerializeField]  private Button m_AwakeGameButton;
+    [SerializeField] private Button m_AwakeGameButton;
+
+    [Header("free spins popup")]
+    [SerializeField] private GameObject freeSpinPopupObject;
+    [SerializeField] private TMP_Text freeSpinPopUPText;
 
     private bool isExit = false;
 
+    private Tween WinPopupTextTween;
+    private Tween ClosePopupTween;
+    internal int FreeSpins;
 
+    [SerializeField]
+    private Button SkipWinAnimation;
+
+    private GameObject currentActivePopUP;
     private void Awake()
     {
         // if (spalsh_screen) spalsh_screen.SetActive(true);
@@ -225,10 +236,10 @@ public class UIManager : MonoBehaviour
         if (GameExit_Button) GameExit_Button.onClick.AddListener(CallOnExitFunction);
 
         if (no_Button) no_Button.onClick.RemoveAllListeners();
-        if (no_Button) no_Button.onClick.AddListener(delegate { if(!isExit){ClosePopup(QuitPopupObject);} });
+        if (no_Button) no_Button.onClick.AddListener(delegate { if (!isExit) { ClosePopup(QuitPopupObject); } });
 
         if (cancel_Button) cancel_Button.onClick.RemoveAllListeners();
-        if (cancel_Button) cancel_Button.onClick.AddListener(delegate {  if (!isExit){ClosePopup(QuitPopupObject);} });
+        if (cancel_Button) cancel_Button.onClick.AddListener(delegate { if (!isExit) { ClosePopup(QuitPopupObject); } });
 
         if (Close_Button) Close_Button.onClick.RemoveAllListeners();
         if (Close_Button) Close_Button.onClick.AddListener(delegate { ClosePopup(LowBalancePopup_Object); });
@@ -248,6 +259,9 @@ public class UIManager : MonoBehaviour
         if (CloseAD_Button) CloseAD_Button.onClick.AddListener(CallOnExitFunction);
 
 
+        if (SkipWinAnimation) SkipWinAnimation.onClick.RemoveAllListeners();
+        if (SkipWinAnimation) SkipWinAnimation.onClick.AddListener(SkipWin);
+
         GoToPage(0);
 
         //Enabling Down Index Button Click To Direct Navigate
@@ -260,24 +274,10 @@ public class UIManager : MonoBehaviour
     }
 
 
-    private IEnumerator LoadingRoutine()
-    {
-        StartCoroutine(LoadingTextAnimate());
-        float fillAmount = 0.7f;
-        progressbar.DOFillAmount(fillAmount, 2f).SetEase(Ease.Linear);
-        progressbarHandle.DOAnchorPosX(20 + (fillAmount * (510 - 20)), 2f, true).SetEase(Ease.Linear);
-        yield return new WaitForSecondsRealtime(2f);
-        yield return new WaitUntil(() => !socketManager.isLoading);
-        progressbar.DOFillAmount(1, 1f).SetEase(Ease.Linear);
-        progressbarHandle.DOAnchorPosX(510, 1f, true).SetEase(Ease.Linear);
-        yield return new WaitForSecondsRealtime(1f);
-        if (spalsh_screen) spalsh_screen.SetActive(false);
-        StopCoroutine(LoadingTextAnimate());
-    }
 
     internal void ADfunction()
     {
-        OpenPopup(ADPopup_Object); 
+        OpenPopup(ADPopup_Object);
     }
 
     private IEnumerator LoadingTextAnimate()
@@ -331,24 +331,64 @@ public class UIManager : MonoBehaviour
         freeSpinCount.text = count.ToString();
     }
 
-    internal void LowBalPopup() {
+    internal void LowBalPopup()
+    {
 
         OpenPopup(LowBalancePopup_Object);
     }
 
-    internal void setFreeSpinData(int count)
+    void SkipWin()
     {
-        if(count>0){
-
-        freeSpinBar.DOFillAmount(1, 0.2f).SetEase(Ease.Linear);
-        freeSpinBarHandle.DOAnchorPosX(510, 0.2f).SetEase(Ease.Linear);
+        Debug.Log("Skip win called");
+        if (ClosePopupTween != null)
+        {
+            ClosePopupTween.Kill();
+            ClosePopupTween = null;
         }
-        freeSpinCount.text = count.ToString();
+        if (WinPopupTextTween != null)
+        {
+            WinPopupTextTween.Kill();
+            WinPopupTextTween = null;
+        }
+        ClosePopup(WinPopup_Object);
+        slotManager.CheckPopups = false;
     }
 
+
+    internal void FreeSpinPopUP(int count, int extraFreeSpin=-1)
+    {
+        if (count > 0)
+        {
+
+            freeSpinBar.DOFillAmount(1, 0.2f).SetEase(Ease.Linear);
+            freeSpinBarHandle.DOAnchorPosX(510, 0.2f).SetEase(Ease.Linear);
+        }
+
+        if (extraFreeSpin<0)
+        {
+            freeSpinPopUPText.text = $" you Have bee Awarded + {count} Free spins";
+
+        }
+        else
+        {
+            freeSpinPopUPText.text = $" you Have bee Awarded extra + {extraFreeSpin} Free spins";
+
+
+        }
+
+        freeSpinCount.text = count.ToString();
+        OpenPopup(freeSpinPopupObject);
+    }
+
+    internal void CloseFreeSpinPopup()
+    {
+        ClosePopup(freeSpinPopupObject);
+        freeSpinCount.text = "";
+
+    }
     private void StartPopupAnim(double amount, bool jackpot = false)
     {
-        int initAmount = 0;
+        double initAmount = 0;
         if (jackpot)
         {
             if (jackpot_Object) jackpot_Object.SetActive(true);
@@ -361,9 +401,22 @@ public class UIManager : MonoBehaviour
 
         if (MainPopup_Object) MainPopup_Object.SetActive(true);
 
-        DOTween.To(() => initAmount, (val) => initAmount = val, (int)amount, 5f).OnUpdate(() =>
+        WinPopupTextTween=DOTween.To(() => initAmount, (val) => initAmount = val, amount, 5f).OnUpdate(() =>
         {
             if (jackpot)
+            {
+                if (jackpot_Text) jackpot_Text.text = initAmount.ToString("f3");
+
+            }
+            else
+            {
+
+                if (Win_Text) Win_Text.text = initAmount.ToString("f3");
+
+            }
+        }).OnComplete(()=>{
+
+                        if (jackpot)
             {
                 if (jackpot_Text) jackpot_Text.text = initAmount.ToString();
 
@@ -378,17 +431,17 @@ public class UIManager : MonoBehaviour
 
         // if(DisconnectPopup_Object.activeSelf) return;
 
-        DOVirtual.DelayedCall(6f, () =>
+        ClosePopupTween=DOVirtual.DelayedCall(6f, () =>
         {
             if (jackpot)
             {
                 ClosePopup(jackpot_Object);
-                jackpot_Text.text="";
+                jackpot_Text.text = "";
             }
             else
             {
                 ClosePopup(WinPopup_Object);
-                Win_Text.text="";
+                Win_Text.text = "";
             }
             slotManager.CheckPopups = false;
         });
@@ -406,14 +459,6 @@ public class UIManager : MonoBehaviour
         //PopulateSpecialSymbols(Specialsymbols);
     }
 
-    //private void PopulateSpecialSymbols(List<string> Specialtext)
-    //{
-    //    for (int i = 0; i < SpecialSymbolsText.Length; i++)
-    //    {
-    //        if (SpecialSymbolsText[i]) SpecialSymbolsText[i].text = Specialtext[i];
-    //    }
-    //}
-
     private void PopulateSymbolsPayout(Paylines paylines)
     {
         for (int i = 0; i < SymbolsText.Length; i++)
@@ -421,15 +466,15 @@ public class UIManager : MonoBehaviour
             string text = null;
             if (paylines.symbols[i].Multiplier[0][0] != 0)
             {
-                text += "5x - " + paylines.symbols[i].Multiplier[0][0];
+                text += "5x - " + paylines.symbols[i].Multiplier[0][0]+"x";
             }
             if (paylines.symbols[i].Multiplier[1][0] != 0)
             {
-                text += "\n4x - " + paylines.symbols[i].Multiplier[1][0];
+                text += "\n4x - " + paylines.symbols[i].Multiplier[1][0]+"x";
             }
             if (paylines.symbols[i].Multiplier[2][0] != 0)
             {
-                text += "\n3x - " + paylines.symbols[i].Multiplier[2][0];
+                text += "\n3x - " + paylines.symbols[i].Multiplier[2][0]+"x";
             }
             if (SymbolsText[i]) SymbolsText[i].text = text;
         }
@@ -458,21 +503,6 @@ public class UIManager : MonoBehaviour
             }
         }
 
-        // for (int i = 0; i < paylines.symbols.Count; i++)
-        // {
-        //     if (paylines.symbols[i].Name.ToUpper() == "FREESPIN")
-        //     {
-        //         if (FreeSpin_Text) FreeSpin_Text.text = "Free Spin: Activates " + paylines.symbols[i].Multiplier[0][1] + ", " + paylines.symbols[i].Multiplier[1][1] + ", or " + paylines.symbols[i].Multiplier[2][1] + " free spins when 3, 4, or 5 symbols appear on pay lines.";
-        //     }
-        //     if (paylines.symbols[i].Name.ToUpper() == "SCATTER")
-        //     {
-        //         if (Scatter_Text) Scatter_Text.text = "Scatter: Offers higher pay outs and awards <color=yellow>" + paylines.symbols[i].Multiplier[0][1] + "</color> free spins if 5 symbols align on the pay line with a multiplier.\nPayout: 5x - " + paylines.symbols[i].Multiplier[0][0] + ", 4x - " + paylines.symbols[i].Multiplier[1][0] + ", 3x - " + paylines.symbols[i].Multiplier[2][0];
-        //     }
-        //     if (paylines.symbols[i].Name.ToUpper() == "JACKPOT")
-        //     {
-        //         if (Jackpot_Text) Jackpot_Text.text = "Jackpot: Mega win triggered by 5 Jackpot symbols on a pay line.\nPayout: <color=yellow>" + paylines.symbols[i].defaultAmount +" X" ;
-        //     }
-        // }
     }
 
     private void CallOnExitFunction()
@@ -541,17 +571,22 @@ public class UIManager : MonoBehaviour
     private void OpenPopup(GameObject Popup)
     {
         if (audioController) audioController.PlayButtonAudio();
+        if(currentActivePopUP!=null)
+        ClosePopup(currentActivePopUP);
+
         if (Popup) Popup.SetActive(true);
+        currentActivePopUP=Popup;
         if (MainPopup_Object) MainPopup_Object.SetActive(true);
     }
 
     private void ClosePopup(GameObject Popup)
     {
         if (audioController) audioController.PlayButtonAudio();
-        if (Popup) Popup.SetActive(false);
-        if(!DisconnectPopup_Object.activeSelf){
-
-        if (MainPopup_Object) MainPopup_Object.SetActive(false);
+        if (!DisconnectPopup_Object.activeSelf)
+        {
+                if (Popup) Popup.SetActive(false);
+                currentActivePopUP=null;
+            if (MainPopup_Object) MainPopup_Object.SetActive(false);
         }
     }
 
@@ -582,7 +617,7 @@ public class UIManager : MonoBehaviour
         {
             ToggleNavigationButton(1);
         }
-        else if(paginationCounter <= 0)
+        else if (paginationCounter <= 0)
         {
             ToggleNavigationButton(0);
         }
@@ -594,7 +629,7 @@ public class UIManager : MonoBehaviour
 
     private void ToggleNavigationButton(int m_index_nav)
     {
-        switch(m_index_nav)
+        switch (m_index_nav)
         {
             case 0:
                 Next_Button.interactable = true;
@@ -611,39 +646,13 @@ public class UIManager : MonoBehaviour
         }
     }
 
-    //private void GoToPage(int index)
-    //{
-
-    //    paginationCounter = index + 1;
-
-    //    paginationCounter = Mathf.Clamp(paginationCounter, 1, 5);
-
-    //    if (Next_Button) Next_Button.interactable = !(paginationCounter >= 5);
-
-    //    if (Previous_Button) Previous_Button.interactable = !(paginationCounter <= 1);
-
-    //    for (int i = 0; i < PageList.Length; i++)
-    //    {
-    //        PageList[i].SetActive(false);
-    //    }
-
-    //    for (int i = 0; i < paginationButtonGrp.Length; i++)
-    //    {
-    //        paginationButtonGrp[i].interactable = true;
-    //        paginationButtonGrp[i].transform.GetChild(0).gameObject.SetActive(false);
-    //    }
-
-    //    PageList[paginationCounter - 1].SetActive(true);
-    //    paginationButtonGrp[paginationCounter - 1].interactable = false;
-    //    paginationButtonGrp[paginationCounter - 1].transform.GetChild(0).gameObject.SetActive(true);
-    //}
 
     private void GoToPage(int m_page_index)
     {
         paginationCounter = m_page_index;
-        for(int i = 0; i < PageList.Length; i++)
+        for (int i = 0; i < PageList.Length; i++)
         {
-            if(m_page_index == i)
+            if (m_page_index == i)
             {
                 PageList[m_page_index].SetActive(true);
                 paginationButtonGrp[m_page_index].transform.GetChild(0).gameObject.SetActive(true);
