@@ -98,7 +98,7 @@ public class Bonus_Controller : MonoBehaviour
         if (resultData[openCount] > 0)
         {
             audioController.PlayWLAudio("bonuswin");
-            reward_text[index].text = "+ " + (resultData[openCount]* slotBehaviour.GetCurrentbetperLine()).ToString("f2");
+            reward_text[index].text = "+ " + (resultData[openCount]* slotBehaviour.GetCurrentbetperLine()).ToString();
             winAmount += (resultData[openCount] * slotBehaviour.GetCurrentbetperLine());
         }
         else
