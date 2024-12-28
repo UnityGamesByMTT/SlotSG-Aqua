@@ -14497,7 +14497,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   m_Material: {fileID: 0}
-  m_Color: {r: 0.7924528, g: 0.7924528, b: 0.7924528, a: 1}
+  m_Color: {r: 0.6981132, g: 0.6981132, b: 0.6981132, a: 1}
   m_RaycastTarget: 0
   m_RaycastPadding: {x: 0, y: 0, z: 0, w: 0}
   m_Maskable: 1
@@ -15564,8 +15564,8 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0.5, y: 0.5}
   m_AnchorMax: {x: 0.5, y: 0.5}
-  m_AnchoredPosition: {x: -0.57002, y: -387.61}
-  m_SizeDelta: {x: 313.19, y: 147.53}
+  m_AnchoredPosition: {x: -1.45, y: -387.61}
+  m_SizeDelta: {x: 311.43, y: 147.53}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!114 &1002109378
 MonoBehaviour:
@@ -24683,31 +24683,31 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   textureArray:
-  - {fileID: 21300000, guid: 56d335c33f1c64701936f09c7f3856d6, type: 3}
-  - {fileID: 21300000, guid: 918201f4095354300beb0ae6af5f736f, type: 3}
-  - {fileID: 21300000, guid: 7efc0833eb3c0401bae403ae070a8a4c, type: 3}
-  - {fileID: 21300000, guid: e6dafd571e5f64023909f1fd664add6e, type: 3}
-  - {fileID: 21300000, guid: 25c71f2094810423c9e0941cddb9bec8, type: 3}
-  - {fileID: 21300000, guid: ae215be9a1e6c4201b86528dd1fde1cf, type: 3}
-  - {fileID: 21300000, guid: 0e7ce6f38b7e444459ae01bfec4f280a, type: 3}
-  - {fileID: 21300000, guid: ef00f0f9349e94a839c998e144b27c51, type: 3}
-  - {fileID: 21300000, guid: bc36ec455a46845ddbb458c5ee9667bf, type: 3}
-  - {fileID: 21300000, guid: 7f0ab68031c54489f8ac0c6081fa2178, type: 3}
-  - {fileID: 21300000, guid: e49ac9d34c3624953b3c57af49b4beca, type: 3}
-  - {fileID: 21300000, guid: ef4ef611fcbb94442bcd5192d294b6a6, type: 3}
-  - {fileID: 21300000, guid: d5b40791f5016420a9deb38bd4ad6a57, type: 3}
-  - {fileID: 21300000, guid: d48c0f3046e454929805c0cde6a73692, type: 3}
-  - {fileID: 21300000, guid: 98d04911f7040426f964b4ca29fc86de, type: 3}
-  - {fileID: 21300000, guid: c29e86c4c2e7148d8b68393c5c26beee, type: 3}
-  - {fileID: 21300000, guid: 37cc15677c94b41c5992b005a50122d5, type: 3}
-  - {fileID: 21300000, guid: f72ba448eaf7b4b649d96c4079ad487d, type: 3}
-  - {fileID: 21300000, guid: 3475ccad87ef94f9bab3eab036f37800, type: 3}
-  - {fileID: 21300000, guid: 2f9157f51edd341b384362f465ffbbe5, type: 3}
+  - {fileID: 21300000, guid: 66ff591a4719248998bb8fd04af523fb, type: 3}
+  - {fileID: 21300000, guid: e36461b08011a4dae95e83525f607505, type: 3}
+  - {fileID: 21300000, guid: 740c6f44d1d83474d996ca54c6d135dd, type: 3}
+  - {fileID: 21300000, guid: 683cb4b49293d45b6bd1c074cd0b8c4c, type: 3}
+  - {fileID: 21300000, guid: ee488efe183f544a8bc8ac8b8337945a, type: 3}
+  - {fileID: 21300000, guid: a8663be303b19497384cf668837e4f5f, type: 3}
+  - {fileID: 21300000, guid: 782d2d9eb85c949d18fe522260bf44e4, type: 3}
+  - {fileID: 21300000, guid: 40191476f4c314a9b937d7e5b5a51c76, type: 3}
+  - {fileID: 21300000, guid: d1384d04b0aed49b9b8202e56ca219ec, type: 3}
+  - {fileID: 21300000, guid: e7ecd444eaae54cf8b34c0f8604c0385, type: 3}
+  - {fileID: 21300000, guid: 34d6c84ff46b64804aa4f1ff0a72e35e, type: 3}
+  - {fileID: 21300000, guid: 432e403910a7340a781a789d97ceaae3, type: 3}
+  - {fileID: 21300000, guid: bb2849c0f09394d8a931e4e2a195f903, type: 3}
+  - {fileID: 21300000, guid: bb422c50ff2d94dc9aeb1256715baa78, type: 3}
+  - {fileID: 21300000, guid: bd287bc61703645a385deffae6a3ad5c, type: 3}
+  - {fileID: 21300000, guid: ff98d99beaf7e4bc69ad2697fa2f1c47, type: 3}
+  - {fileID: 21300000, guid: 6f94f41f991ad4649ab0ee6561f6e435, type: 3}
+  - {fileID: 21300000, guid: 63331feb42de54b269e77e0b44533da1, type: 3}
+  - {fileID: 21300000, guid: 1e71c1fd9a0b74785b19c7ee6b3b4de7, type: 3}
+  - {fileID: 21300000, guid: 871e209ec68b348e197248321ffb0a62, type: 3}
   rendererDelegate: {fileID: 1461471267}
   useSharedMaterial: 1
   doLoopAnimation: 1
   currentAnimationState: 0
-  AnimationSpeed: 20
+  AnimationSpeed: 15
   delayBetweenLoop: 0
   StartOnAwake: 0
   DestroyOnCompletion: 0
@@ -36990,7 +36990,7 @@ MonoBehaviour:
   - {fileID: 21300000, guid: 2b18efd01836145bbbca19602ec32195, type: 3}
   - {fileID: 21300000, guid: 187e4230d706045bd9242c3cc1a64309, type: 3}
   - {fileID: 21300000, guid: e330467d439de4a4695931b68124afaf, type: 3}
-  TurboToggleSprites: []
+  TurboToggleSprite: {fileID: 21300000, guid: 56d335c33f1c64701936f09c7f3856d6, type: 3}
   images:
   - slotImages:
     - {fileID: 7833985048920035729}

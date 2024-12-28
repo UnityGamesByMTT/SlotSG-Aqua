@@ -19,7 +19,7 @@ public class SlotBehaviour : MonoBehaviour
 
 
     [SerializeField]
-    private Sprite[] TurboToggleSprites;
+    private Sprite TurboToggleSprite;
 
     [Header("Slot Images")]
     [SerializeField]
@@ -178,7 +178,7 @@ public class SlotBehaviour : MonoBehaviour
     private double currentBalance = 0;
     private double currentTotalBet = 0;
 
-    private int FreeSpins = 0;
+    private int freeSpinsLeft = 0;
 
 
     private bool StopSpinToggle;
@@ -276,12 +276,15 @@ public class SlotBehaviour : MonoBehaviour
         {
 
             i++;
+            freeSpinsLeft--;
             uiManager.updateFreeSPinData(1 - ((float)i / (float)spinchances), spinchances - i);
             yield return new WaitForSeconds(0.2f);
             StartSlots(IsAutoSpin);
             yield return tweenroutine;
+            yield return new WaitForSeconds(SpinDelay);
+
         }
-        FreeSpins = 0;
+        freeSpinsLeft = 0;
         if (WasAutoSpinOn)
         {
             AutoSpin();
@@ -478,14 +481,14 @@ public class SlotBehaviour : MonoBehaviour
         {
             IsTurboOn = false;
             Turbo_Button.GetComponent<ImageAnimation>().StopAnimation();
-            // Turbo_Button.image.sprite = TurboToggleSprites[0];
-            Turbo_Button.image.color = new Color(0.86f, 0.86f, 0.86f, 1);
+            Turbo_Button.image.sprite = TurboToggleSprite;
+            // Turbo_Button.image.color = new Color(0.86f, 0.86f, 0.86f, 1);
         }
         else
         {
             IsTurboOn = true;
             Turbo_Button.GetComponent<ImageAnimation>().StartAnimation();
-            Turbo_Button.image.color = new Color(1, 1, 1, 1);
+            // Turbo_Button.image.color = new Color(1, 1, 1, 1);
         }
     }
 
@@ -523,14 +526,7 @@ public class SlotBehaviour : MonoBehaviour
 
 
 
-    //just for testing purposes delete on production
-    private void Update()
-    {
-        // if (Input.GetKeyDown(KeyCode.Space) && SlotStart_Button.interactable)
-        // {
-        //     StartSlots();
-        // }
-    }
+    //just for testing purposes delete on productio
 
     //populate the slots with the values recieved from backend
     //internal void PopulateInitalSlots(int number, List<int> myvalues)
@@ -760,7 +756,7 @@ public class SlotBehaviour : MonoBehaviour
 
             DOTween.To(() => initAmount, (val) => initAmount = val, balance, 0.8f).OnUpdate(() =>
             {
-                if (Balance_text) Balance_text.text = initAmount.ToString("f2");
+                if (Balance_text) Balance_text.text = initAmount.ToString("f3");
             });
 
         }
@@ -768,7 +764,7 @@ public class SlotBehaviour : MonoBehaviour
         SocketManager.AccumulateResult(BetCounter);
 
         yield return new WaitUntil(() => SocketManager.isResultdone);
-
+        yield return new WaitForSeconds(0.9f);
 
         for (int j = 0; j < SocketManager.resultData.ResultReel.Count; j++)
         {
@@ -810,7 +806,7 @@ public class SlotBehaviour : MonoBehaviour
         yield return new WaitForSeconds(0.1f);
         if (SocketManager.playerdata.currentWining > 0)
         {
-            SpinDelay = 1.2f;
+            SpinDelay = 2f;
         }
         else
         {
@@ -893,13 +889,13 @@ public class SlotBehaviour : MonoBehaviour
                     StopCoroutine(FreeSpinRoutine);
                     FreeSpinRoutine = null;
                 }
-                int extraFreeSpin = SocketManager.resultData.freeSpins.count - FreeSpins +1;
-                FreeSpins=SocketManager.resultData.freeSpins.count;
+                int extraFreeSpin = SocketManager.resultData.freeSpins.count - freeSpinsLeft ;
+                freeSpinsLeft=SocketManager.resultData.freeSpins.count;
                 uiManager.FreeSpinPopUP(SocketManager.resultData.freeSpins.count, extraFreeSpin);
             }
             else
             {
-                FreeSpins=(int)SocketManager.resultData.freeSpins.count;
+                freeSpinsLeft=(int)SocketManager.resultData.freeSpins.count;
                 uiManager.FreeSpinPopUP((int)SocketManager.resultData.freeSpins.count);
             }
             yield return new WaitForSeconds(1.2f);
