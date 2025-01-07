@@ -224,9 +224,15 @@ public class SlotBehaviour : MonoBehaviour
 
 
         if (StopSpin_Button) StopSpin_Button.onClick.RemoveAllListeners();
-        if (StopSpin_Button) StopSpin_Button.onClick.AddListener(() => { StopSpinToggle = true; StopSpin_Button.gameObject.SetActive(false); });
+        if (StopSpin_Button) StopSpin_Button.onClick.AddListener(() => { 
+            StopSpinToggle = true; StopSpin_Button.gameObject.SetActive(false);
+            audioController.PlayButtonAudio();
+         });
         if (Turbo_Button) Turbo_Button.onClick.RemoveAllListeners();
-        if (Turbo_Button) Turbo_Button.onClick.AddListener(TurboToggle);
+        if (Turbo_Button) Turbo_Button.onClick.AddListener(()=>{
+            TurboToggle();
+            audioController.PlayButtonAudio();
+        });
 
         tweenHeight = (myImages.Length * IconSizeFactor) - 280;
 
