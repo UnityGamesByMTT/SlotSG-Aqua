@@ -8282,7 +8282,7 @@ MonoBehaviour:
   uIManager: {fileID: 377874625}
   bonusdata: []
   _jsManager: {fileID: 500036493}
-  TestToken: eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6IjY2ZDgzY2U1YTI3YmY5MDI0NDNlYjRjMCIsInVzZXJuYW1lIjoic2F5YW4iLCJyb2xlIjoicGxheWVyIiwiaWF0IjoxNzM1ODg2OTEzLCJleHAiOjE3MzY0OTE3MTN9.Slbmd8Ip4dW4Dbv2O33rbEbJ3xvulXyOMm_5Nit5Kw0
+  TestToken: eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6IjY3OWEwZjAzNzA4ZDZlOGE0YjZiZGRmYSIsInVzZXJuYW1lIjoibWVodWwtdGVzdCIsInJvbGUiOiJwbGF5ZXIiLCJpYXQiOjE3NDA2Mzc3MzksImV4cCI6MTc0MTI0MjUzOX0.YE2jQ8Y73kCAudsHf7jCJyBtdbnY3Xbsx3n6ZS72JNM
 --- !u!114 &500036493
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -20759,7 +20759,7 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0.5, y: 0.5}
   m_AnchorMax: {x: 0.5, y: 0.5}
-  m_AnchoredPosition: {x: 640.9803, y: -460.022}
+  m_AnchoredPosition: {x: 660, y: -460.022}
   m_SizeDelta: {x: 202.97, y: 75.244995}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!114 &1237956803
@@ -26013,7 +26013,7 @@ MonoBehaviour:
   m_Material: {fileID: 0}
   m_Color: {r: 1, g: 1, b: 1, a: 1}
   m_RaycastTarget: 1
-  m_RaycastPadding: {x: 0, y: 0, z: 0, w: 0}
+  m_RaycastPadding: {x: 10, y: 10, z: 10, w: 20}
   m_Maskable: 1
   m_OnCullStateChanged:
     m_PersistentCalls:
@@ -30176,7 +30176,7 @@ MonoBehaviour:
   m_Material: {fileID: 0}
   m_Color: {r: 1, g: 1, b: 1, a: 1}
   m_RaycastTarget: 1
-  m_RaycastPadding: {x: 0, y: 0, z: 0, w: 0}
+  m_RaycastPadding: {x: 10, y: 10, z: 10, w: 20}
   m_Maskable: 1
   m_OnCullStateChanged:
     m_PersistentCalls:
@@ -35090,7 +35090,7 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0.5, y: 0.5}
   m_AnchorMax: {x: 0.5, y: 0.5}
-  m_AnchoredPosition: {x: 366, y: -460}
+  m_AnchoredPosition: {x: 360, y: -460}
   m_SizeDelta: {x: 219, y: 102}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!114 &1971843253
