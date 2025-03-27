@@ -47,8 +47,8 @@ public class SocketIOManager : MonoBehaviour
     [SerializeField]
     private string TestToken;
     [SerializeField] internal JSFunctCalls JSManager;
-    protected string gameID = "";
-    //protected string gameID = "SL-AQUA";
+    //protected string gameID = "";
+    protected string gameID = "SL-AQUA";
     internal bool isLoading;
 
     internal bool SetInit = false;
