@@ -227,7 +227,7 @@ public class UIManager : MonoBehaviour
 
 
         if (CloseDisconnect_Button) CloseDisconnect_Button.onClick.RemoveAllListeners();
-        if (CloseDisconnect_Button) CloseDisconnect_Button.onClick.AddListener(CallOnExitFunction);
+        if (CloseDisconnect_Button) CloseDisconnect_Button.onClick.AddListener(delegate { CallOnExitFunction(); socketManager.ReactNativeCallOnFailedToConnect(); }); //BackendChanges
 
         if (exit_Button) exit_Button.onClick.RemoveAllListeners();
         if (exit_Button) exit_Button.onClick.AddListener(delegate { OpenPopup(QuitPopupObject); });
